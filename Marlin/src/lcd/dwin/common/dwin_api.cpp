@@ -21,72 +21,70 @@
  */
 #include "../../../inc/MarlinConfigPre.h"
 
-#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
+#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI || IS_DWIN_LCD_PROUI
 
 #include "dwin_api.h"
 #include "dwin_set.h"
-#ifndef DWIN_LCD_PROUI
-  #include "dwin_font.h"
-#endif
+#include "dwin_font.h"
 
 #include "../../../inc/MarlinConfig.h"
 
 #include <string.h> // for memset
 
-// Make sure dwinSendBuf is large enough to hold the largest string plus draw command and tail.
-// Assume the narrowest (6 pixel) font and 2-byte gb2312-encoded characters.
 uint8_t dwinSendBuf[11 + DWIN_WIDTH / 6 * 2] = { 0xAA };
 uint8_t dwinBufTail[4] = { 0xCC, 0x33, 0xC3, 0x3C };
 uint8_t databuf[26] = { 0 };
-bool need_lcd_update = true;
 
 // Send the data in the buffer plus the packet tail
 void dwinSend(size_t &i) {
   ++i;
   for (uint8_t n = 0; n < i; ++n) { LCD_SERIAL.write(dwinSendBuf[n]); delayMicroseconds(1); }
   for (uint8_t n = 0; n < 4; ++n) { LCD_SERIAL.write(dwinBufTail[n]); delayMicroseconds(1); }
-  need_lcd_update = true;
+  //need_lcd_update = true;
 }
 
 /*-------------------------------------- System variable function --------------------------------------*/
 
-// Handshake (1: Success, 0: Fail)
 bool dwinHandshake() {
-  int recnum = 0;
   #ifndef LCD_BAUDRATE
-    #define LCD_BAUDRATE 115200
+    #define LCD_BAUDRATE 250000
   #endif
-  #ifndef TJC_DISPLAY
-	  #define LCD_BAUDRATE 250000
-  #endif
+
   LCD_SERIAL.begin(LCD_BAUDRATE);
+
   const millis_t serial_connect_timeout = millis() + 1000UL;
-  while (!LCD_SERIAL.connected() && PENDING(millis(), serial_connect_timeout)) { /*nada*/ }
+  while (!LCD_SERIAL.connected() && PENDING(millis(), serial_connect_timeout)) {
+    /* nada */
+  }
 
   size_t i = 0;
   dwinByte(i, 0x00);
   dwinSend(i);
-  delay(10);
 
-  while (LCD_SERIAL.available() > 0 && recnum < (signed)sizeof(databuf)) {
-    databuf[recnum] = LCD_SERIAL.read();
-    // ignore the invalid data
-    if (databuf[0] != FHONE) { // prevent the program from running.
-      if (recnum > 0) {
-        recnum = 0;
-        ZERO(databuf);
-      }
+  constexpr uint8_t handshake_len = 4;
+  uint8_t recnum = 0;
+
+  ZERO(databuf);
+
+  const millis_t response_timeout = millis() + 1000UL;
+
+  while (recnum < handshake_len && PENDING(millis(), response_timeout)) {
+
+    if (!LCD_SERIAL.available()) {
+      delay(1);
       continue;
     }
-    delay(10);
-    recnum++;
+
+    databuf[recnum++] = LCD_SERIAL.read();
   }
 
-  return ( recnum >= 3
-        && databuf[0] == FHONE
-        && databuf[1] == '\0'
-        && databuf[2] == 'O'
-        && databuf[3] == 'K' );
+  return (
+    recnum == handshake_len &&
+    databuf[0] == FHONE &&
+    databuf[1] == '\0' &&
+    databuf[2] == 'O' &&
+    databuf[3] == 'K'
+  );
 }
 
 #if HAS_LCD_BRIGHTNESS
@@ -99,6 +97,44 @@ bool dwinHandshake() {
     dwinSend(i);
   }
 #endif
+
+// Get font character width
+uint8_t fontWidth(uint8_t cfont) {
+  switch (cfont) {
+    #if DISABLED(TJC_DISPLAY)
+      case font6x12 : return 6;
+      case font20x40: return 20;
+      case font24x48: return 24;
+      case font28x56: return 28;
+      case font32x64: return 32;
+    #endif
+    case font8x16 : return 8;
+    case font10x20: return 10;
+    case font12x24: return 12;
+    case font14x28: return 14;
+    case font16x32: return 16;
+    default: return 0;
+  }
+}
+
+// Get font character height
+uint8_t fontHeight(uint8_t cfont) {
+  switch (cfont) {
+    #if DISABLED(TJC_DISPLAY)
+      case font6x12 : return 12;
+      case font20x40: return 40;
+      case font24x48: return 48;
+      case font28x56: return 56;
+      case font32x64: return 64;
+    #endif
+    case font8x16 : return 16;
+    case font10x20: return 20;
+    case font12x24: return 24;
+    case font14x28: return 28;
+    case font16x32: return 32;
+    default: return 0;
+  }
+}
 
 // Set screen display direction
 //  dir: 0=0°, 1=90°, 2=180°, 3=270°
@@ -113,12 +149,9 @@ void dwinFrameSetDir(uint8_t dir) {
 
 // Update display
 void dwinUpdateLCD() {
-  if (need_lcd_update) {
-    size_t i = 0;
-    dwinByte(i, 0x3D);
-    dwinSend(i);
-    need_lcd_update = false;
-  }
+  size_t i = 0;
+  dwinByte(i, 0x3D);
+  dwinSend(i);
 }
 
 /*---------------------------------------- Drawing functions ----------------------------------------*/
@@ -295,45 +328,6 @@ void dwinDrawString(bool bShow, uint8_t size, uint16_t color, uint16_t bColor, u
   dwinSend(i);
 }
 
-#ifndef DWIN_LCD_PROUI
-// Get font character width
-uint8_t fontWidth(uint8_t cfont) {
-  switch (cfont) {
-    #if DISABLED(TJC_DISPLAY)
-      case font6x12 : return 6;
-      case font20x40: return 20;
-      case font24x48: return 24;
-      case font28x56: return 28;
-      case font32x64: return 32;
-    #endif
-    case font8x16 : return 8;
-    case font10x20: return 10;
-    case font12x24: return 12;
-    case font14x28: return 14;
-    case font16x32: return 16;
-    default: return 0;
-  }
-}
-
-// Get font character height
-uint8_t fontHeight(uint8_t cfont) {
-  switch (cfont) {
-    #if DISABLED(TJC_DISPLAY)
-      case font6x12 : return 12;
-      case font20x40: return 40;
-      case font24x48: return 48;
-      case font28x56: return 56;
-      case font32x64: return 64;
-    #endif
-    case font8x16 : return 16;
-    case font10x20: return 20;
-    case font12x24: return 24;
-    case font14x28: return 28;
-    case font16x32: return 32;
-    default: return 0;
-  }
-}
-
 // Draw a positive integer
 //  bShow: true=display background color; false=don't display background color
 //  zeroFill: true=zero fill; false=no zero fill
@@ -417,7 +411,6 @@ void dwinDrawFloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t 
   */
   dwinSend(i);
 }
-#endif // !DWIN_LCD_PROUI
 
 // Draw a floating point number
 //  value: positive unscaled float value
@@ -465,7 +458,7 @@ void dwinIconShow(bool IBD, bool BIR, bool BFI, uint8_t libID, uint8_t picID, ui
 //  addr: SRAM address
 void dwinIconShow(bool IBD, bool BIR, bool BFI, uint16_t x, uint16_t y, uint16_t addr) {
   NOMORE(x, DWIN_WIDTH - 1);
-  NOMORE(y, DWIN_HEIGHT - 1);
+  NOMORE(y, DWIN_HEIGHT - 1); // -- ozy -- srl
   size_t i = 0;
   dwinByte(i, 0x24);
   dwinWord(i, x);
@@ -521,5 +514,37 @@ void dwinIconAnimationControl(uint16_t state) {
   dwinWord(i, state);
   dwinSend(i);
 }
+
+/*---------------------------------------- Memory functions ----------------------------------------*/
+// The LCD has an additional 32KB SRAM and 16KB Flash
+// Data can be written to the SRAM and saved to one of the jpeg page files
+
+// Write Data Memory
+//  command 0x31
+//  Type: Write memory selection; 0x5A=SRAM; 0xA5=Flash
+//  Address: Write data memory address; 0x000-0x7FFF for SRAM; 0x000-0x3FFF for Flash
+//  Data: data
+//
+//  Flash writing returns 0xA5 0x4F 0x4B
+
+// Read Data Memory
+//  command 0x32
+//  Type: Read memory selection; 0x5A=SRAM; 0xA5=Flash
+//  Address: Read data memory address; 0x000-0x7FFF for SRAM; 0x000-0x3FFF for Flash
+//  Length: leangth of data to read; 0x01-0xF0
+//
+//  Response:
+//    Type, Address, Length, Data
+
+// Write Picture Memory
+//  Write the contents of the 32KB SRAM data memory into the designated image memory space
+//  Issued: 0x5A, 0xA5, PIC_ID
+//  Response: 0xA5 0x4F 0x4B
+//
+//  command 0x33
+//  0x5A, 0xA5
+//  PicId: Picture Memory location, 0x00-0x0F
+//
+//  Flash writing returns 0xA5 0x4F 0x4B
 
 #endif // HAS_DWIN_E3V2 || IS_DWIN_MARLINUI

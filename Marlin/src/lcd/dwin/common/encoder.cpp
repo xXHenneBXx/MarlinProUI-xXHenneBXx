@@ -46,13 +46,7 @@ EncoderRate encoderRate;
 
 // TODO: Replace with ui.quick_feedback
 void Encoder_tick() {
-  #if HAS_CHIRP
-    #if ENABLED(SPEAKER)
-      if (ui.sound_on) BUZZ(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
-    #elif HAS_BEEPER
-      if (ui.sound_on) buzzer.click(10);
-    #endif
-  #endif
+  TERN_(HAS_BEEPER, if (ui.sound_on) buzzer.click(10));
 }
 
 // Analyze encoder value and return state
@@ -123,8 +117,6 @@ EncoderState encoderReceiveAnalyze() {
 
   return temp_diffState;
 }
-
-EncoderState get_encoder_menuitems() { return TERN(SMOOTH_ENCODER_MENUITEMS, get_encoder_state(), encoderReceiveAnalyze()); }
 
 #if PIN_EXISTS(LCD_LED)
 

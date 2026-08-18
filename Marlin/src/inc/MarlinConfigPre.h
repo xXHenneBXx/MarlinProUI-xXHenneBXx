@@ -51,3 +51,8 @@
 #ifndef __MARLIN_DEPS__
   #include HAL_PATH(.., inc/Conditionals_adv.h)
 #endif
+
+// ProUI
+//#if PROUI_EX
+//  #include "../lcd/dwin/proui/proui_ex.h"
+//#endif

@@ -157,7 +157,7 @@ typedef struct {
 
   // Various Options
   #if ENABLED(BAUD_RATE_GCODE)
-    bool baud115K = true;
+    bool baud115K = false;
   #endif
   #if ALL(LCD_BED_TRAMMING, HAS_BED_PROBE)
     bool fullManualTramming = false;

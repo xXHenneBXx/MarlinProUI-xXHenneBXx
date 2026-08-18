@@ -45,13 +45,10 @@ typedef enum {
   ENCODER_DIFF_ENTER = 3   // click
 } EncoderState;
 
-#define ENCODER_WAIT_MS 20
+#define ENCODER_WAIT_MS TERN(DWIN_LCD_PROUI, 10, 20)
 
 // Analyze encoder value and return state
 EncoderState encoderReceiveAnalyze();
-
-// Smooth encoder state for menu items
-EncoderState get_encoder_menuitems();
 
 inline EncoderState get_encoder_state() {
   static millis_t Encoder_ms = 0;

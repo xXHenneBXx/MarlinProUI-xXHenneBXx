@@ -1,0 +1,20 @@
+{
+"Configuration.h" : [
+  {
+    "op": "Enable",
+    "searchfor": "FIX_MOUNTED_PROBE",
+    "comment": "Fix-mounted probe - inductive or nozzle-based probe"
+  },
+  {
+    "op": "Custom",
+    "mask": "\\{[^}]+\\}",
+    "searchfor": "NOZZLE_TO_PROBE_OFFSET",
+    "value": "{ 10, 10, 0 }",
+    "comment": "Probe offset from nozzle"
+  }
+],
+"Configuration_adv.h" : [
+],
+"Version.h" : [
+]
+}

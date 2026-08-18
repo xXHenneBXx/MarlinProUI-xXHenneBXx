@@ -25,7 +25,12 @@
 #define Language_English    1
 #define Language_Chinese    2
 
-#define ICON 7 // 7.ICO
+//#define USE_STOCK_DWIN_SET
+#ifdef USE_STOCK_DWIN_SET
+  #define ICON 9 // 9.ICO
+#else
+	#define ICON 7 // 7.ICO
+#endif
 
 #ifndef CORP_WEBSITE
   #define CORP_WEBSITE WEBSITE_URL
@@ -152,28 +157,6 @@
 #define ICON_FWRetZRaise  ICON_MoveZ
 #define ICON_FWRecSpeed   ICON_Setspeed
 #define ICON_FWRecExtra   ICON_StepE
-
-#if ENABLED (DWIN_LCD_PROUI)
-  #define ICON_Folder       ICON_More
-  #define ICON_AdvSet       ICON_Language
-  #define ICON_HomeOffset   ICON_AdvSet
-  #define ICON_HomeOffsetX  ICON_StepX
-  #define ICON_HomeOffsetY  ICON_StepY
-  #define ICON_HomeOffsetZ  ICON_StepZ
-  #define ICON_ProbeOffset  ICON_AdvSet
-  #define ICON_ProbeOffsetX ICON_StepX
-  #define ICON_ProbeOffsetY ICON_StepY
-  #define ICON_ProbeOffsetZ ICON_StepZ
-  #define ICON_PIDNozzle    ICON_SetEndTemp
-  #define ICON_PIDbed       ICON_SetBedTemp
-  #define ICON_FWRetract    ICON_StepE
-  #define ICON_FWRetLength  ICON_StepE
-  #define ICON_FWRetSpeed   ICON_Setspeed
-  #define ICON_FWRetZRaise  ICON_MoveZ
-  #define ICON_FWRecSpeed   ICON_Setspeed
-  #define ICON_FWRecExtra   ICON_StepE
-  #define ICON_ResumeEEPROM ICON_ResetEEPROM
-#endif
 
 #if DISABLED(DWIN_CREALITY_LCD_STD_ICONS)
   // Index of custom icons should be >= CUSTOM_ICON_START

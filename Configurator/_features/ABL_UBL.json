@@ -1,0 +1,84 @@
+{
+"Configuration.h" : [
+  {
+    "op": "Enable",
+    "searchfor": "AUTO_BED_LEVELING_UBL",
+    "comment": "Unified Bed Leveling - comprehensive mesh leveling system"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "RESTORE_LEVELING_AFTER_G28",
+    "comment": "Restore leveling state after homing"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "PREHEAT_BEFORE_LEVELING",
+    "comment": "Preheat before probing for consistent results"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "GRID_MAX_POINTS_X",
+    "value": "5",
+    "comment": "UBL mesh grid points (max 9 for PROUI_EX)"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "GRID_MAX_POINTS_Y",
+    "value": "GRID_MAX_POINTS_X"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "LCD_BED_LEVELING",
+    "comment": "Add bed leveling menu to LCD"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "Z_SAFE_HOMING",
+    "comment": "Required for safe probe homing"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "Z_HOMING_HEIGHT",
+    "value": "10",
+    "comment": "Z clearance before homing for probe safety"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "Z_CLEARANCE_DEPLOY_PROBE",
+    "value": "10"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "Z_CLEARANCE_BETWEEN_PROBES",
+    "value": "5"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "PROBING_MARGIN",
+    "value": "10"
+  }
+],
+"Configuration_adv.h" : [
+  {
+    "op": "Enable",
+    "searchfor": "PROBE_OFFSET_WIZARD",
+    "comment": "Add probe Z offset calibration to LCD menu"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "BABYSTEPPING",
+    "comment": "Enable babystepping for Z micro-adjustments"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "DOUBLECLICK_FOR_Z_BABYSTEPPING"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "BABYSTEP_ZPROBE_OFFSET",
+    "comment": "Allow babystepping to adjust probe offset"
+  }
+],
+"Version.h" : [
+]
+}

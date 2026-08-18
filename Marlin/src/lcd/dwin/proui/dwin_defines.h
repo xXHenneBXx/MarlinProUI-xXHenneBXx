@@ -24,7 +24,7 @@
 /**
  * DWIN general defines and data structs for PRO UI
  * Based on the original work of: Miguel Risco-Castillo (MRISCOC)
- * https://github.com/mriscoc/Ender3V2S1
+ * https://github.com/mriscoc/Ender3V2S1 
  * Version: 3.12.2
  * Date: 2022/08/08
  */
@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include "../../../core/types.h"
 
-//#define TJC_DISPLAY         // Enable for TJC display
+#define TJC_DISPLAY         // Enable for TJC display
 //#define DACAI_DISPLAY       // Enable for DACAI display
 //#define TITLE_CENTERED      // Center Menu Title Text
 

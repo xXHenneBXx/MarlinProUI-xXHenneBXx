@@ -50,7 +50,9 @@ enum PopupID : uint8_t {
   Popup_ETemp,
   Popup_ConfFilChange,
   Popup_PurgeMore,
-  Popup_MeshSlot,
+  #if ALL(AUTO_BED_LEVELING_UBL, HAS_MESH_STORAGE)
+    Popup_MeshSlot,
+  #endif
   Popup_Level,
   Popup_Home,
   Popup_MoveWait,
@@ -128,7 +130,7 @@ enum colorID : uint8_t {
 #define Custom_Colors       10
 #define COLOR_AQUA          RGB(0x00, 0x3F, 0x1F)
 #define COLOR_LIGHT_WHITE   0xBDD7
-#define COLOR_GREEN         RGB(0x00,0x3F,0x00)
+#define COLOR_GREEN         RGB(0x00, 0x3F, 0x00)
 #define COLOR_LIGHT_GREEN   0x3460
 #define COLOR_CYAN          0x07FF
 #define COLOR_LIGHT_CYAN    0x04F3
@@ -203,10 +205,6 @@ public:
   static void drawPopup(FSTR_P const line1, FSTR_P const line2, FSTR_P const line3, uint8_t mode, uint8_t icon=0);
   static void popupSelect();
   static void updateStatusBar(const bool refresh=false);
-
-  #if HAS_MESH
-    static void setMeshViewerStatus();
-  #endif
 
   static FSTR_P getMenuTitle(const uint8_t menu);
   static uint8_t getMenuSize(const uint8_t menu);

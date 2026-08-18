@@ -77,6 +77,8 @@
   #include "lcd/dwin/common/encoder.h"
   #if ENABLED(DWIN_CREALITY_LCD)
     #include "lcd/dwin/creality/dwin.h"
+  #elif ENABLED(DWIN_LCD_PROUI)
+    #include "lcd/dwin/proui/dwin.h"						   
   #elif ENABLED(DWIN_CREALITY_LCD_JYERSUI)
     #include "lcd/dwin/jyersui/dwin.h"
   #elif ENABLED(SOVOL_SV06_RTS)
@@ -852,6 +854,9 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
 
   // Update the Beeper queue
   TERN_(HAS_BEEPER, buzzer.tick());
+  
+  // Handle ProUI extension update process
+  TERN_(DWIN_LCD_PROUI, ExtUI.update());
 
   // Async Babystepping via the Emergency Parser
   #if ALL(EP_BABYSTEPPING, EMERGENCY_PARSER)
@@ -1324,14 +1329,14 @@ void setup() {
   if (mcu & RST_BROWN_OUT) SERIAL_ECHOLNPGM(STR_BROWNOUT_RESET);
   if (mcu & RST_WATCHDOG)  SERIAL_ECHOLNPGM(STR_WATCHDOG_RESET);
   if (mcu & RST_SOFTWARE)  SERIAL_ECHOLNPGM(STR_SOFTWARE_RESET);
-
-  // Identify myself as Marlin x.x.x
-  SERIAL_ECHOLNPGM("Marlin " SHORT_BUILD_VERSION);
-  #ifdef STRING_DISTRIBUTION_DATE
-    SERIAL_ECHO_MSG(
-      " Last Updated: " STRING_DISTRIBUTION_DATE
-      " | Author: " STRING_CONFIG_H_AUTHOR
-    );
+							  								   
+    // Identify myself as Marlin x.x.x
+    SERIAL_ECHOLNPGM("Marlin " SHORT_BUILD_VERSION);
+    #ifdef STRING_DISTRIBUTION_DATE
+      SERIAL_ECHO_MSG(
+        " Last Updated: " STRING_DISTRIBUTION_DATE
+        " | Author: " STRING_CONFIG_H_AUTHOR
+      );																													  
   #endif
   SERIAL_ECHO_MSG(" Compiled: " __DATE__);
   SERIAL_ECHO_MSG(STR_FREE_MEMORY, hal.freeMemory(), STR_PLANNER_BUFFER_BYTES, sizeof(block_t) * (BLOCK_BUFFER_SIZE));
@@ -1706,6 +1711,13 @@ void setup() {
     SETUP_RUN(ui.check_touch_calibration());
   #endif
 
+  #if ENABLED(DWIN_LCD_PROUI)
+    SETUP_RUN(dwinInitScreen());
+  #endif
+
+  #if DISABLED(DWIN_CREALITY_LCD)
+    SETUP_RUN(dwinInitScreen());
+  #endif
   #if ENABLED(EASYTHREED_UI)
     SETUP_RUN(easythreed_ui.init());
   #endif

@@ -1,0 +1,50 @@
+{
+  "Configuration.h": [
+    {
+      "op": "Custom",
+      "searchfor": "DEFAULT_MAX_FEEDRATE",
+      "mask": "{.*}",
+      "value": "{ 500, 500, 10, 25 }",
+      "comment": "Pultrusion pull speed"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "DEFAULT_ACCELERATION",
+      "value": "300",
+      "comment": "Gentle acceleration for steady pull"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "DEFAULT_RETRACT_ACCELERATION",
+      "value": "500",
+      "comment": "Pultrusion retract accel"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "DEFAULT_TRAVEL_ACCELERATION",
+      "value": "800",
+      "comment": "Pultrusion travel accel"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "DEFAULT_EJERK",
+      "value": "3.0",
+      "comment": "Lower E jerk for steady extrusion"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "EXTRUDE_MAXLENGTH",
+      "value": "10000",
+      "comment": "Allow long continuous extrusion"
+    }
+  ],
+  "Configuration_adv.h": [
+    {
+      "op": "CustomVal",
+      "searchfor": "MIN_STEPS_PER_SEGMENT",
+      "value": "2",
+      "comment": "Fine pultrusion movement"
+    }
+  ],
+  "Version.h": []
+}

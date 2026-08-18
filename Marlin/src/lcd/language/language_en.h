@@ -298,7 +298,6 @@ namespace LanguageNarrow_en {
   LSTR MSG_HOTEND_OFFSET_N                = _UxGT("2nd Nozzle @");
   LSTR MSG_UBL_DOING_G29                  = _UxGT("Doing G29");
   LSTR MSG_UBL_TOOLS                      = _UxGT("UBL Tools");
-  LSTR MSG_TOOLBAR_SETUP                  = _UxGT("Toolbar Setup");
   LSTR MSG_LCD_TILTING_MESH               = _UxGT("Tilting Point");
   LSTR MSG_UBL_MANUAL_MESH                = _UxGT("Manually Build Mesh");
   LSTR MSG_UBL_BC_INSERT                  = _UxGT("Place Shim & Measure");
@@ -961,7 +960,6 @@ namespace LanguageNarrow_en {
   LSTR DGUS_MSG_NO_FILE_SELECTED          = _UxGT("No file selected");
   LSTR DGUS_MSG_TEMP_TOO_LOW              = _UxGT("Temperature too low");
   LSTR DGUS_MSG_EXECUTING_COMMAND         = _UxGT("Executing command...");
-  LSTR MSG_OPTION_DISABLED                = _UxGT("Disabled");
   LSTR DGUS_MSG_BED_PID_DISABLED          = _UxGT("Bed PID disabled");
   LSTR DGUS_MSG_PID_DISABLED              = _UxGT("PID disabled");
   LSTR DGUS_MSG_PID_AUTOTUNING            = _UxGT("PID autotuning...");

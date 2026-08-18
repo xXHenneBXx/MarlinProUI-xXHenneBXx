@@ -1,0 +1,50 @@
+{
+"Configuration.h" : [
+  {
+    "op": "Disable",
+    "searchfor": "Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN",
+    "comment": "Manual mesh not have a probe"
+  },
+  {
+    "op": "Disable",
+    "searchfor": "USE_PROBE_FOR_Z_HOMING",
+    "comment": "Manual mesh not have a probe"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "PROBE_MANUALLY",
+    "comment": "Manual mesh version"
+  },
+  {
+    "op": "Custom",
+    "searchfor": "NOZZLE_TO_PROBE_OFFSET",
+    "mask": "{.*}",
+    "value":"{ 0, 0, 0 }",
+    "comment": "Manual mesh use the nozzle as probe"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "MESH_BED_LEVELING",
+    "comment": "Manual Mesh"
+  },
+  {
+    "op": "CustomVal",
+    "searchfor": "LEVELING_NOZZLE_TEMP",
+    "value": "175",
+    "comment": "Preheat nozzle without oozing"
+  },
+  {
+    "op": "Disable",
+    "searchfor": "HAS_TRAMMING_WIZARD",
+    "comment": "Manual mesh not have a probe"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "Z_AFTER_HOMING"
+  }
+],
+"Configuration_adv.h" : [
+],
+"Version.h" : [
+]   
+}

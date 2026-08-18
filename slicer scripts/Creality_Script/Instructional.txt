@@ -1,0 +1,10 @@
+ Step 1 ~ Download latest python, MAKE SURE you click and ensure it is installed to $PATH
+ step 2 ~ Download professionalfirmware.py (creality post-processing script) from my link here
+ step 3 ~ Open CMD prompt, type, where python, Copy the destination of the python.exe
+ step 4 ~ Open Creality Slicer, in the right side menu, click "Other" scroll down to post-processing scripts paste the python destination in quotes EX: "C:\Users\USER\AppData\Local\Python\bin\python.exe" 
+ step 5 ~ In creality slicer, In top left hand corner beside file is a down arrow button, click it, go to help, click show configuration folder
+ step 6 ~ In opened configuration folder of creality, make a new folder called,  scripts 
+ step 7 ~ Place downloaded professionalfirmware.py into the new scripts folder
+ step 8 ~ Copy the destination of the professionalfirmware.py EX: C:\Users\USER\AppData\Roaming\Creality\Creality Print\7.0\scripts\professionalfirmware.py
+ step 9 ~ Open creality again, under post-processing scripts seperate each script with a space first, then paste destination of professionalfirmware.py with quotes EX: "C:\Users\USER\AppData\Roaming\Creality\Creality Print\7.0\scripts\professionalfirmware.py"
+ step 10 ~ You're now ready !! Slice a file and export the .gcode, upon exporting .gcode a prompt will pop asking you for your size you need for your Machine/screen type, it also has a custom size you can use if you have a different Machine !

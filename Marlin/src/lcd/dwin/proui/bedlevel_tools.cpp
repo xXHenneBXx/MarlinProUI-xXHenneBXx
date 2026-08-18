@@ -49,7 +49,7 @@
 #include "dwinui.h"
 #include "dwin_popup.h"
 #include "bedlevel_tools.h"
-#include "../../../module/motion.h"
+
 #include "../../marlinui.h"
 #include "../../../core/types.h"
 #include "../../../feature/bedlevel/bedlevel.h"

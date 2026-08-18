@@ -1,0 +1,38 @@
+{
+"Configuration.h" : [
+  {
+    "op": "Enable",
+    "searchfor": "LCD_BED_TRAMMING",
+    "comment": "Add bed tramming wizard to LCD menu"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "BED_TRAMMING_INSET_LFRB"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "BED_TRAMMING_INCLUDE_CENTER"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "BED_TRAMMING_AUDIO_FEEDBACK"
+  }
+],
+"Configuration_adv.h" : [
+  {
+    "op": "Enable",
+    "searchfor": "ASSISTED_TRAMMING",
+    "comment": "G35 command - probe-assisted bed screw adjustment"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "ASSISTED_TRAMMING_WIZARD"
+  },
+  {
+    "op": "Enable",
+    "searchfor": "REPORT_TRAMMING_MM"
+  }
+],
+"Version.h" : [
+]
+}

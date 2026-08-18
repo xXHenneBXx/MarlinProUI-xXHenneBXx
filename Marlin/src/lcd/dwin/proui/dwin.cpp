@@ -35,8 +35,6 @@
 #include "dwin.h"
 #include "menus.h"
 #include "dwin_popup.h"
-#include "../common/dwin_set.h"
-#include "dwinui.h"
 
 #include "../../utf8.h"
 #include "../../marlinui.h"
@@ -1996,9 +1994,20 @@ void dwinRedrawScreen() {
 //
 void MarlinUI::init_lcd() {
   delay(750); // Wait to wakeup screen
-  const bool hs = dwinHandshake(); UNUSED(hs);
+
+  const bool hs = dwinHandshake();
+  UNUSED(hs);
+
+  #if ENABLED(DEBUG_DWIN)
+    SERIAL_ECHOPGM("dwinHandshake ");
+    SERIAL_ECHOLN(hs ? F("ok.") : F("error."));
+  #endif
+
   dwinFrameSetDir(1);
+
   dwinJPGCacheTo1(Language_English);
+
+  dwinUpdateLCD();
 }
 
 void MarlinUI::clear_lcd() {}
@@ -2201,7 +2210,7 @@ void setMoveZ() { hmiValue.axis = Z_AXIS; setPFloatOnClick(Z_MIN_POS, Z_MAX_POS,
     drawCheckboxLine(currentMenu->line(), hmiData.baud115K);
     dwinUpdateLCD();
   }
-  void setBaud115K() { queue.inject(F("M575 P0 B115200")); hmiData.baud115K = false; }
+  void setBaud115K() { queue.inject(F("M575 P0 B115200")); hmiData.baud115K = true; }
   void setBaud250K() { queue.inject(F("M575 P0 B250000")); hmiData.baud115K = false; }
 #endif
 

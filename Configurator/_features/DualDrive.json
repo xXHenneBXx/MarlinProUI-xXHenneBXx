@@ -1,0 +1,38 @@
+{
+  "Configuration.h": [
+    {
+      "op": "Custom",
+      "searchfor": "DEFAULT_AXIS_STEPS_PER_UNIT",
+      "mask": "{.*}",
+      "value": "{ 80, 80, 400, 139 }",
+      "comment": "Dual drive gear E steps (BMG-style 3:1)"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "DEFAULT_EJERK",
+      "value": "4.0",
+      "comment": "Dual drive jerk"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "EXTRUDE_MAXLENGTH",
+      "value": "5000",
+      "comment": "Dual drive extrusion length"
+    }
+  ],
+  "Configuration_adv.h": [
+    {
+      "op": "CustomVal",
+      "searchfor": "RETRACT_LENGTH",
+      "value": "3",
+      "comment": "Dual drive short retract"
+    },
+    {
+      "op": "CustomVal",
+      "searchfor": "RETRACT_FEEDRATE",
+      "value": "30",
+      "comment": "Dual drive retract speed"
+    }
+  ],
+  "Version.h": []
+}

@@ -30,19 +30,12 @@
  */
 
 #include "../../../inc/MarlinConfigPre.h"
-#include "dwinui.h"
+
 #include "../common/dwin_set.h"
 #include "../common/dwin_font.h"
 #include "../common/dwin_color.h"
 #include "dwin_lcd.h"
 
-
-#define ICON_AxisD                249
-#define ICON_AxisBR               250
-#define ICON_AxisTR               251
-#define ICON_AxisBL               252
-#define ICON_AxisTL               253
-#define ICON_AxisC                254
 #define ICON_BedSizeX         ICON_PrintSize
 #define ICON_BedSizeY         ICON_PrintSize
 #define ICON_BedTramming      ICON_SetHome
@@ -159,7 +152,7 @@
 #define BTN_Purge             92
 
 // Extended and default UI Colors
-#define COLOR_BLACK           RGB(1, 12, 8)
+#define COLOR_BLACK           0
 #define COLOR_GREEN           RGB(0, 63, 0)
 #define COLOR_BLUE            RGB(0, 0, 31)
 #define COLOR_LIGHT_WHITE     0xBDD7
@@ -169,7 +162,7 @@
 #define COLOR_LIGHT_BLUE      0x3A6A
 #define COLOR_MAGENTA         0xF81F
 #define COLOR_LIGHT_MAGENTA   0x9813
-#define COLOR_LIGHT_RED       RGB(31, 31, 15)
+#define COLOR_LIGHT_RED       0x8800
 #define COLOR_ORANGE          0xFA20
 #define COLOR_LIGHT_ORANGE    0xFBC0
 #define COLOR_LIGHT_YELLOW    0x8BE0
