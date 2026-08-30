@@ -49,7 +49,7 @@
 
 #if ENABLED(DWIN_CREALITY_LCD)
   #include "dwin/creality/dwin.h"
-#elif ENABLED(DWIN_LCD_PROUI)
+#elif ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
   #include "dwin/proui/dwin.h"
 #endif
 
@@ -77,22 +77,33 @@ typedef bool (*statusResetFunc_t)();
     uint8_t get_ADC_keyValue();
   #endif
 
-  #if HAS_MARLINUI_MENU
-
-    #include "lcdprint.h"
-
-    #if !HAS_GRAPHICAL_TFT
-      void _wrap_string(uint8_t &col, uint8_t &row, const char * const string, read_byte_cb_t cb_read_byte, const bool wordwrap=false);
-      inline void wrap_string_P(uint8_t &col, uint8_t &row, PGM_P const pstr, const bool wordwrap=false) { _wrap_string(col, row, pstr, read_byte_rom, wordwrap); }
-      inline void wrap_string(uint8_t &col, uint8_t &row, const char * const string, const bool wordwrap=false) { _wrap_string(col, row, string, read_byte_ram, wordwrap); }
-    #endif
-
-    typedef void (*screenFunc_t)();
-    typedef void (*menuAction_t)();
-
-  #endif // HAS_MARLINUI_MENU
-
 #endif // HAS_WIRED_LCD
+
+
+#if HAS_MARLINUI_MENU
+
+  #include "lcdprint.h"
+
+  #if !HAS_GRAPHICAL_TFT
+    void _wrap_string(uint8_t &col, uint8_t &row, const char * const string, read_byte_cb_t cb_read_byte, const bool wordwrap=false);
+    inline void wrap_string_P(uint8_t &col, uint8_t &row, PGM_P const pstr, const bool wordwrap=false) { _wrap_string(col, row, pstr, read_byte_rom, wordwrap); }
+    inline void wrap_string(uint8_t &col, uint8_t &row, const char * const string, const bool wordwrap=false) { _wrap_string(col, row, string, read_byte_ram, wordwrap); }
+  #endif
+
+  typedef void (*screenFunc_t)();
+  typedef void (*menuAction_t)();
+
+#endif // HAS_MARLINUI_MENU
+
+#if ANY(HAS_WIRED_LCD, DWIN_CREALITY_LCD_JYERSUI)
+  #define LCD_WITH_BLINK 1
+  #define LCD_UPDATE_INTERVAL DIV_TERN(DOUBLE_LCD_FRAMERATE, TERN(HAS_TOUCH_BUTTONS, 50, 100), 2)
+#endif
+
+#if LCD_WITH_BLINK && HAS_EXTRA_PROGRESS
+  #define HAS_ROTATE_PROGRESS 1
+#endif
+
 
 #if ANY(HAS_WIRED_LCD, DWIN_CREALITY_LCD_JYERSUI)
   #define LCD_WITH_BLINK 1

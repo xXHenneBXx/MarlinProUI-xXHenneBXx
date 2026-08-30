@@ -38,6 +38,13 @@
   #include "../lcd/marlinui.h"
 #endif
 
+#if ALL(DWIN_LCD_PROUI, INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
+#if ENABLED(POLAR)
+  #include "polar.h"
+#endif																		  
 #if HAS_BED_PROBE
   #include "probe.h"
 #endif
@@ -218,11 +225,10 @@ int16_t Motion::feedrate_percentage = 100;
   feedRate_t Motion::xy_probe_feedrate_mm_s = MMM_TO_MMS(XY_PROBE_FEEDRATE);
 #endif
 
-#if ENABLED(PROUI_ITEM_ZFR)
-  uint16_t Motion::z_probe_slow_mm_s = MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW);
-#elif Z_PROBE_FEEDRATE_SLOW
-  constexpr feedRate_t Motion::z_probe_slow_mm_s;
+#if ENABLED(PROUI_ITEM_ZFR) || ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
+  feedRate_t Motion::z_probe_slow_mm_s = MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW);
 #endif
+
 #ifdef Z_PROBE_FEEDRATE_FAST
   constexpr feedRate_t Motion::z_probe_fast_mm_s;
 #endif

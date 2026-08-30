@@ -19,7 +19,7 @@ if pioutil.is_pio_build():
     #
     # For build.offset define LD_FLASH_OFFSET, used by ldscript.ld
     #
-    if 'offset' in board_keys:
+    if "offset" in board_keys:
         LD_FLASH_OFFSET = board.get("build.offset")
         marlin.relocate_vtab(LD_FLASH_OFFSET)
 
@@ -28,7 +28,7 @@ if pioutil.is_pio_build():
 
         # Keep STM32_FLASH_SIZE as the chip total (KiB)
         maximum_flash_size = _max_flash_bytes // 1024
-        marlin.replace_define('STM32_FLASH_SIZE', maximum_flash_size)
+        marlin.replace_define("STM32_FLASH_SIZE", maximum_flash_size)
 
         # Also compute available flash after bootloader for Project Inspect
         try:
@@ -77,7 +77,7 @@ if pioutil.is_pio_build():
     #
     # For build.encrypt_mks rename and encode the firmware file.
     #
-    if 'encrypt_mks' in board_keys:
+    if "encrypt_mks" in board_keys:
 
         # Encrypt ${PROGNAME}.bin and save it with the name given in build.encrypt_mks
         def encrypt(source, target, env):
@@ -89,7 +89,7 @@ if pioutil.is_pio_build():
     #
     # For build.rename simply rename the firmware file.
     #
-    if 'rename' in board_keys:
+    if "rename" in board_keys:
 
         # If FIRMWARE_BIN is defined by config, override all
         mf = env["MARLIN_FEATURES"]
@@ -102,21 +102,21 @@ if pioutil.is_pio_build():
             from os import path
 
             # Build the timestamped base name from your template (may already include ".bin")
-            base = datetime.now().strftime(new_name.replace('{date}', '%Y%m%d').replace('{time}', '%H%M%S'))
+            base = datetime.now().strftime(new_name.replace("{date}", "%Y%m%d").replace("{time}", "%H%M%S"))
 
             # Ensure correct extensions for both outputs
-            if base.lower().endswith('.bin'):
-                stem = base[:-4]            # strip ".bin" for the ELF stem
+            if base.lower().endswith(".bin"):
+                stem = base[:-4]  # strip ".bin" for the ELF stem
                 bin_name = base
             else:
                 stem = base
-                bin_name = base + '.bin'
+                bin_name = base + ".bin"
 
-            elf_name = stem + '.elf'
+            elf_name = stem + ".elf"
 
             # Current files produced by PlatformIO
-            bin_old = Path(target[0].path)           # e.g. .pio/build/<env>/firmware.bin
-            elf_old = Path(source[0].path)           # e.g. .pio/build/<env>/firmware.elf
+            bin_old = Path(target[0].path)  # e.g. .pio/build/<env>/firmware.bin
+            elf_old = Path(source[0].path)  # e.g. .pio/build/<env>/firmware.elf
 
             # New paths in the same directories
             bin_new = Path(target[0].dir.path, bin_name)
@@ -127,10 +127,12 @@ if pioutil.is_pio_build():
             elf_old.replace(elf_new)
 
             # Update PROGNAME (base without extension) for any later steps that read it
-            env['PROGNAME'] = path.splitext(str(bin_new))[0]
+            env["PROGNAME"] = path.splitext(str(bin_new))[0]
 
             # Optional: log the results
             print(f"FIRMWARE BIN: {bin_new}")
             print(f"FIRMWARE ELF: {elf_new}")
 
         marlin.add_post_action(rename_target)
+        import open_explorer
+        open_explorer.open_file_explorer()

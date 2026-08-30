@@ -33,7 +33,7 @@
 
 #include "../common/dwin_set.h"
 #include "../common/dwin_font.h"
-#include "../common/dwin_color.h"
+//#include "../common/dwin_color.h" //TODO: Remove as its redundant and clashes with dwin_defines.h
 #include "dwin_lcd.h"
 
 #define ICON_BedSizeX         ICON_PrintSize

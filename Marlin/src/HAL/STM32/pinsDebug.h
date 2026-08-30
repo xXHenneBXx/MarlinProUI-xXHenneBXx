@@ -130,7 +130,7 @@ const XrefInfo pin_xref[] PROGMEM = {
 #ifndef NUM_ANALOG_LAST
   #define NUM_ANALOG_LAST ((NUM_ANALOG_FIRST) + (NUM_ANALOG_INPUTS) - 1)
 #endif
-#define NUMBER_PINS_TOTAL ((NUM_DIGITAL_PINS) + TERN0(HAS_HIGH_ANALOG_PINS, NUM_ANALOG_INPUTS))
+#define NUMBER_PINS_TOTAL ((NUM_DIGITAL_PINS) PLUS_TERN0(HAS_HIGH_ANALOG_PINS, NUM_ANALOG_INPUTS))
 #define isValidPin(P) (WITHIN(P, 0, (NUM_DIGITAL_PINS) - 1) || TERN0(HAS_HIGH_ANALOG_PINS, WITHIN(P, NUM_ANALOG_FIRST, NUM_ANALOG_LAST)))
 #define digitalRead_mod(A) extDigitalRead(A)  // must use Arduino pin numbers when doing reads
 #define printPinNumber(Q)
@@ -296,6 +296,6 @@ void printPinPWM(const pin_t pin) {
       }
     }
   #else
-    // TODO: F1 doesn't support changing pins function, so we need to check the function of the PIN and if it's enabled
+    /// TODO: F1 doesn't support changing pins function, so we need to check the function of the PIN and if it's enabled
   #endif
 } // printPinPWM

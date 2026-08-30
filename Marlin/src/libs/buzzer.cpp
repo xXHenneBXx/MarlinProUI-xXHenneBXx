@@ -32,6 +32,10 @@
   #include "../lcd/extui/ui_api.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 Buzzer::state_t Buzzer::state;
 CircularQueue<tone_t, TONE_QUEUE_LENGTH> Buzzer::buffer;
 Buzzer buzzer;

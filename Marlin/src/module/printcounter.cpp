@@ -33,6 +33,10 @@ Stopwatch print_job_timer;      // Global Print Job Timer instance
   #include "../lcd/extui/ui_api.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 #include "printcounter.h"
 #include "../HAL/shared/eeprom_api.h"
 

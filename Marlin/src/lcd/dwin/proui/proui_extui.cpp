@@ -22,6 +22,7 @@
 
 /*********************
  * proui_extui.cpp   *
+ * ProUI ExtUI hooks *
  *********************/
 
 /****************************************************************************
@@ -43,7 +44,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ENABLED(DWIN_LCD_PROUI) && ENABLED(EXTENSIBLE_UI)
 
 #include "dwin_popup.h"
 
@@ -64,7 +65,7 @@
 
 namespace ExtUI {
 
-  void onStartup() { dwinInitScreen(); }
+  void onStartup() {}
 
   void onIdle() {}
   void onPrinterKilled(FSTR_P const error, FSTR_P const component) {}
@@ -252,5 +253,4 @@ namespace ExtUI {
   void onAxisEnabled(const axis_t) {}
 
 } // ExtUI
-
-#endif // DWIN_LCD_PROUI
+#endif // DWIN_LCD_PROUI && EXTENSIBLE_UI || TJC_DISPLAY

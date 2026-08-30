@@ -96,6 +96,10 @@
   #include "../lcd/extui/ui_api.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../core/debug_out.h"
 

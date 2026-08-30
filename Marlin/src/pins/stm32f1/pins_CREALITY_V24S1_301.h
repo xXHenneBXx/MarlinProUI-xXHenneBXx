@@ -94,7 +94,9 @@
 #if HAS_CUTTER
   //#define HEATER_0_PIN                    -1
   //#define HEATER_BED_PIN                  -1
-  #define FAN0_PIN                          -1
+  #if DISABLED(CV_LASER_MODULE)
+    #define FAN0_PIN                        -1
+  #endif
   #define SPINDLE_LASER_PWM_PIN             PC0   // Bed FET
   #define SPINDLE_LASER_ENA_PIN             PC0   // FET 1
   #define SPINDLE_DIR_PIN                   PC0   // FET 4

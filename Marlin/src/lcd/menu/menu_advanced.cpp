@@ -26,7 +26,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_MARLINUI_MENU
+#if ANY(HAS_MARLINUI_MENU, DWIN_LCD_PROUI, TJC_DISPLAY)
 
 #include "menu_item.h"
 #include "../../MarlinCore.h"

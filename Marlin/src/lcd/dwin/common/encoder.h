@@ -45,7 +45,8 @@ typedef enum {
   ENCODER_DIFF_ENTER = 3   // click
 } EncoderState;
 
-#define ENCODER_WAIT_MS TERN(DWIN_LCD_PROUI, 10, 20)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+ #define ENCODER_WAIT_MS TERN(DWIN_LCD_PROUI, 10, 20)
 
 // Analyze encoder value and return state
 EncoderState encoderReceiveAnalyze();
@@ -104,5 +105,5 @@ inline bool applyEncoder(const EncoderState &encoder_diffState, T &valref) {
   //  luminance: brightness (0~0xFF)
   //  change_Time: gradient time (ms)
   void LED_GraduallyControl(const uint8_t RGB_Scale, const uint8_t luminance, const uint16_t change_Interval);
-
+#endif // DWIN_LCD_PROUI
 #endif // LCD_LED

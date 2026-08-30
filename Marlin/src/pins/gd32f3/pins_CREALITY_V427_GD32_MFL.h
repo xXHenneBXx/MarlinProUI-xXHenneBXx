@@ -30,6 +30,8 @@
 #define BOARD_INFO_NAME      "Creality V4.2.7 MFL"
 #define DEFAULT_MACHINE_NAME "Creality3D MFL"
 
+#define NO_MAPLE_WARNING     // Disable warning when compiling with Maple env
+
 //
 // Steppers
 //

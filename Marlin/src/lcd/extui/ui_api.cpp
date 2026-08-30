@@ -43,7 +43,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if ENABLED(EXTENSIBLE_UI)
+#if ANY(DWIN_LCD_PROUI, EXTENSIBLE_UI, TJC_DISPLAY)
 
 #include "../marlinui.h"
 #include "../../gcode/queue.h"
@@ -1170,7 +1170,7 @@ namespace ExtUI {
 // MarlinUI passthroughs to ExtUI
 //
 #if DISABLED(HAS_DWIN_E3V2)
-  void MarlinUI::init_lcd() { ExtUI::onStartup(); }
+  void MarlinUI::init_lcd() { ExtUI::onStartup(); } /// NOTE: This is for MarlinCore.cpp TODO: for devices NOT using HAS_DWIN_E3V2
 
   void MarlinUI::clear_lcd() {}
   void MarlinUI::clear_for_drawing() {}

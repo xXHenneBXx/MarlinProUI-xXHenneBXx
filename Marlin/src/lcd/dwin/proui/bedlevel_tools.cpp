@@ -43,13 +43,13 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ALL(DWIN_LCD_PROUI, HAS_LEVELING)
+#if (ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)) && HAS_LEVELING
 
 #include "dwin.h"
 #include "dwinui.h"
 #include "dwin_popup.h"
+#include "dwin_defines.h"
 #include "bedlevel_tools.h"
-
 #include "../../marlinui.h"
 #include "../../../core/types.h"
 #include "../../../feature/bedlevel/bedlevel.h"
@@ -268,4 +268,4 @@ bool BedLevelTools::meshValidate() {
 
 #endif // USE_GRID_MESHVIEWER
 
-#endif // DWIN_LCD_PROUI && HAS_LEVELING
+#endif // DWIN_LCD_PROUI || TJC_DISPLAY && HAS_LEVELING

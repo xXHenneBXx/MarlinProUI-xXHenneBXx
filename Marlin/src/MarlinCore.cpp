@@ -74,16 +74,14 @@
 #endif
 
 #if HAS_DWIN_E3V2
-  #include "lcd/dwin/common/encoder.h"
-  #if ENABLED(DWIN_CREALITY_LCD)
-    #include "lcd/dwin/creality/dwin.h"
-  #elif ENABLED(DWIN_LCD_PROUI)
-    #include "lcd/dwin/proui/dwin.h"						   
+    #include "lcd/dwin/common/encoder.h"
+    #if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+      #include "lcd/dwin/proui/dwin.h"
   #elif ENABLED(DWIN_CREALITY_LCD_JYERSUI)
     #include "lcd/dwin/jyersui/dwin.h"
   #elif ENABLED(SOVOL_SV06_RTS)
     #include "lcd/sovol_rts/sovol_rts.h"
-  #endif
+	#endif	
 #endif
 
 #if HAS_ETHERNET
@@ -292,6 +290,7 @@ MarlinState Marlin::state = MF_INITIALIZING;
 
 // For M109 and M190, this flag may be cleared (by M108) to exit the wait loop
 bool Marlin::wait_for_heatup = false;
+bool wait_for_heatup = Marlin::wait_for_heatup; // Undefined reference workaround
 
 #if !HAS_MEDIA
   CardReader card; // Stub instance with "no media" methods
@@ -304,7 +303,7 @@ PGMSTR(M112_KILL_STR, "M112 Shutdown");
   bool Marlin::wait_for_user; // = false
 
   void Marlin::wait_for_user_response(millis_t ms/*=0*/, const bool no_sleep/*=false*/) {
-    UNUSED(no_sleep);
+    IF_DISABLED(ADVANCED_PAUSE_FEATURE, UNUSED(no_sleep);)
     KEEPALIVE_STATE(PAUSED_FOR_USER);
     wait_start();
     if (ms) ms += millis(); // expire time
@@ -817,7 +816,7 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
   // Return if setup() isn't completed
   if (is(MF_INITIALIZING)) goto IDLE_DONE;
 
-  // TODO: Still causing errors
+  /// TODO: Still causing errors
   TERN_(TOOL_SENSOR, (void)check_tool_sensor_stats(motion.extruder, true));
 
   // Handle filament runout sensors
@@ -854,9 +853,12 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
 
   // Update the Beeper queue
   TERN_(HAS_BEEPER, buzzer.tick());
+  ///TODO: Fix the ui.update for extensible only
+  // Handle ProUI extension update process
+  //TERN_(DWIN_LCD_PROUI, ui.update());
   
   // Handle ProUI extension update process
-  TERN_(DWIN_LCD_PROUI, ExtUI.update());
+  //TERN_(TJC_DISPLAY, ui.update());
 
   // Async Babystepping via the Emergency Parser
   #if ALL(EP_BABYSTEPPING, EMERGENCY_PARSER)
@@ -1329,16 +1331,18 @@ void setup() {
   if (mcu & RST_BROWN_OUT) SERIAL_ECHOLNPGM(STR_BROWNOUT_RESET);
   if (mcu & RST_WATCHDOG)  SERIAL_ECHOLNPGM(STR_WATCHDOG_RESET);
   if (mcu & RST_SOFTWARE)  SERIAL_ECHOLNPGM(STR_SOFTWARE_RESET);
-							  								   
+  
+  #if ANY(DWIN_LCD_PROUI, TJC_DISPLAY, HAS_CGCODE)						
     // Identify myself as Marlin x.x.x
     SERIAL_ECHOLNPGM("Marlin " SHORT_BUILD_VERSION);
     #ifdef STRING_DISTRIBUTION_DATE
       SERIAL_ECHO_MSG(
         " Last Updated: " STRING_DISTRIBUTION_DATE
-        " | Author: " STRING_CONFIG_H_AUTHOR
-      );																													  
-  #endif
-  SERIAL_ECHO_MSG(" Compiled: " __DATE__);
+        " | Author: xXHennBXx"
+      );
+	#endif
+    SERIAL_ECHO_MSG(" Compiled: " __DATE__);
+  #endif			 
   SERIAL_ECHO_MSG(STR_FREE_MEMORY, hal.freeMemory(), STR_PLANNER_BUFFER_BYTES, sizeof(block_t) * (BLOCK_BUFFER_SIZE));
 
   // Some HAL need precise delay adjustment
@@ -1669,14 +1673,14 @@ void setup() {
     const uint8_t err = BL24CXX::check();
     SERIAL_ECHO_TERNARY(err, "BL24CXX Check ", "failed", "succeeded", "!\n");
   #endif
-
-  #if ENABLED(DWIN_CREALITY_LCD)
-    SETUP_RUN(dwinInitScreen());
+  
+  #if HAS_DWIN_E3V2_BASIC
+    SETUP_RUN(dwinInitScreen());  // ELSE try this (MarlinUI::init_lcd());
   #elif ENABLED(SOVOL_SV06_RTS)
     SETUP_RUN(rts.init());
   #endif
 
-  #if HAS_SERVICE_INTERVALS && DISABLED(DWIN_CREALITY_LCD)
+  #if HAS_SERVICE_INTERVALS && !HAS_DWIN_E3V2_BASIC /// REMOVED: && DISABLED(DWIN_CREALITY_LCD)
     SETUP_RUN(ui.reset_status(true));  // Show service messages or keep current status
   #endif
 
@@ -1707,17 +1711,10 @@ void setup() {
     SETUP_RUN(password.lock_machine());      // Will not proceed until correct password provided
   #endif
 
-  #if ALL(HAS_MARLINUI_MENU, TOUCH_SCREEN_CALIBRATION) && ANY(TFT_CLASSIC_UI, TFT_COLOR_UI)
+  #if ALL(HAS_MARLINUI_MENU, TOUCH_SCREEN_CALIBRATION) && ANY(TFT_CLASSIC_UI, TFT_COLOR_UI) /// REMOVED: DWIN_CREALITY_LCD
     SETUP_RUN(ui.check_touch_calibration());
   #endif
 
-  #if ENABLED(DWIN_LCD_PROUI)
-    SETUP_RUN(dwinInitScreen());
-  #endif
-
-  #if DISABLED(DWIN_CREALITY_LCD)
-    SETUP_RUN(dwinInitScreen());
-  #endif
   #if ENABLED(EASYTHREED_UI)
     SETUP_RUN(easythreed_ui.init());
   #endif
@@ -1755,7 +1752,7 @@ void setup() {
  * The main Marlin program loop
  *
  *  - Call marlin.idle() to handle all tasks between G-code commands
- *      Note that no G-codes from the queue can be executed during idle()
+ *      NOTE: No G-codes from the queue can be executed during idle()
  *      but many G-codes can be called directly anytime like macros.
  *  - Check whether SD card auto-start is needed now.
  *  - Check whether SD print finishing is needed now.

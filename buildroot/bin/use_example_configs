@@ -18,7 +18,7 @@ import os, subprocess, sys, urllib.request, urllib.error
 from pathlib import Path
 
 DEBUGGING = False
-CONFIG_FILES = ("Configuration.h", "Configuration_adv.h", "_Bootscreen.h", "_Statusscreen.h")
+CONFIG_FILES = ("Configuration.h", "Configuration_adv.h", "Version.h", "_Bootscreen.h", "_Statusscreen.h")
 
 def debug_print(s):
     if DEBUGGING: print(s)
@@ -32,16 +32,17 @@ def get_current_branch():
     except subprocess.CalledProcessError:
         return None
 
-def sparse_checkout(branch, config_path, repo_url="https://github.com/MarlinFirmware/Configurations.git"):
+def sparse_checkout(branch, config_path, repo_url="https://github.com/classicrocker883/MRiscoCProUI.git"):
     configs_dir = Path("ConfigurationsRepo")
-    config_subdir = f"config/{config_path}"
+    config_subdir = f"configurations/{config_path}"
 
     if not configs_dir.exists():
         # Step 1: Clone with no checkout
-        subprocess.run([
-            "git", "clone", "--depth", "1", "--filter=blob:none", "--sparse",
-            "--branch", branch, repo_url, str(configs_dir)
-        ], check=True)
+        subprocess.run(
+            ["git", "clone", "--depth", "1", "--filter=blob:none", "--sparse",
+            "--branch", branch, repo_url, str(configs_dir)],
+            check=True
+        )
 
     # Step 2: Enable sparse checkout and set the folder
     subprocess.run(["git", "sparse-checkout", "set", config_subdir], cwd=str(configs_dir), check=True)
@@ -51,7 +52,7 @@ def sparse_checkout(branch, config_path, repo_url="https://github.com/MarlinFirm
 def copy_config_files(branch, config_path, dest_dir):
     sparse_checkout(branch, config_path)
 
-    src_dir = Path("ConfigurationsRepo") / "config" / config_path
+    src_dir = Path("ConfigurationsRepo") / "configurations" / config_path
 
     # Validate that configuration files were actually found
     found_any = any((src_dir / fname).exists() for fname in CONFIG_FILES)
@@ -91,14 +92,13 @@ def fetch_config_files(cref, config_path, dest_dir):
     validate_config_path(cref, config_path)
 
     config_path_url = config_path.replace(' ', '%20')
-    base_url = f"https://raw.githubusercontent.com/MarlinFirmware/Configurations/{cref}/config/{config_path_url}"
+    base_url = f"https://raw.githubusercontent.com/classicrocker883/MRiscoCProUI/{cref}/configurations/{config_path_url}"
 
     for file in CONFIG_FILES:
         url = f"{base_url}/{file}"
         dest_file = dest_dir / file
         if os.getenv('DEBUG', '0') == '1':
             debug_print(f"Fetching {file} from {url} to {dest_file}")
-
         try:
             urllib.request.urlretrieve(url, dest_file)
         except urllib.error.HTTPError as e:
@@ -116,37 +116,40 @@ def fetch_configs(cref, config_path):
         print(f"Directory 'Marlin' not found at the current location.")
         sys.exit(1)
 
-    if os.environ.get('GITHUB_ACTIONS'):        # Running on GitHub ?
+    if os.environ.get('GITHUB_ACTIONS'):  # Running on GitHub ?
         copy_config_files(cref, config_path, marlin_dir)
     else:
         fetch_config_files(cref, config_path, marlin_dir)
 
 def main():
+    # Delegate to use_example_configs.py for testing purposes
+    script_path = Path(__name__).parent / "buildroot/bin/use_example_configs2"
+
+    if not script_path.exists():
+        print(f"Error: Finalized script not found at {script_path}")
+        sys.exit(1)
+
+    cmd = [sys.executable, str(script_path)] + sys.argv[1:]
+
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Script execution failed with return code {e.returncode}")
+        sys.exit(e.returncode)
+    except Exception as e:
+        print(f"An error occurred while calling the script: {e}")
+        sys.exit(1)
+    return
+
     mbranch = get_current_branch()
     if not mbranch:
         print("Not a git repository or no branch found.")
         sys.exit(1)
 
-    if mbranch.startswith("bugfix-"):
+    if mbranch.startswith("2026-"):
         cref = mbranch
-    elif mbranch.startswith("lts-"):
-        cref = mbranch.replace("lts-", "latest-")
-    elif mbranch.endswith("bugfix-2.1.x"):
-        cref = "bugfix-2.1.x"
-    elif mbranch.endswith("-2.1.x") or mbranch == "2.1.x":
-        cref = "latest-2.1.x"
-    elif mbranch.endswith("bugfix-2.0.x"):
-        cref = "bugfix-2.0.x"
-    elif mbranch.endswith("-2.0.x") or mbranch == "2.0.x":
-        cref = "latest-2.0.x"
-    elif mbranch.endswith("bugfix-1.1.x"):
-        cref = "bugfix-1.1.x"
-    elif mbranch.endswith("-1.1.x") or mbranch == "1.1.x":
-        cref = "latest-1.1.x"
-    elif mbranch == "1.0.x":
-        cref = "latest-1.0.x"
     else:
-        cref = "bugfix-2.1.x"
+        cref = "2026-August"
 
     if len(sys.argv) > 1:
         arg = sys.argv[1]
@@ -156,15 +159,14 @@ def main():
             cref = part1
         else:
             config_path = arg
-        config_path = 'examples/'+config_path
     else:
-        config_path = "default"
+        config_path = "configurations"
 
     try:
-        subprocess.run(['restore_configs'], check=True)
+        subprocess.run(["restore_configs"], check=True)
     except FileNotFoundError:
         try:
-            subprocess.run(['./buildroot/bin/restore_configs'], check=True)
+            subprocess.run(["./buildroot/bin/restore_configs"], check=True)
         except FileNotFoundError:
             print("restore_configs not found, skipping.")
 

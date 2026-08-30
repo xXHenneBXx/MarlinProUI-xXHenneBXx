@@ -117,8 +117,8 @@ BASE=${BASE/#\~/$HOME}
 CONFIG=${CONFIG/#\~/$HOME}
 
 # Make sure the examples exist
-SUB1="$BASE/config/examples"
-[[ -d "$SUB1" ]] || { echo "-b|--base $BASE doesn't contain config/examples" ; exit 1 ; }
+SUB1="$BASE/configurations"
+[[ -d "$SUB1" ]] || { echo "-b|--base $BASE doesn't contain configurations" ; exit 1 ; }
 
 # Make sure the specific config folder exists
 SUB="$SUB1/$CONFIG"
@@ -136,13 +136,16 @@ else
 fi
 
 # Delete any config files from previous builds
-rm -f Marlin/_Bootscreen.h Marlin/_Statusscreen.h
+# rm -f Marlin/_Bootscreen.h Marlin/_Statusscreen.h
 
 # Copy configurations into the Marlin folder
 echo "Getting configuration files from $SUB"
-cp "$BASE"/config/default/*.h Marlin/
+cp "$BASE"/configurations/Voxelab\ Aquila/UBL/*.h Marlin/
 cp "$SUB"/*.h Marlin/
 
+if [ -f Marlin/Configuration-MP.h ]; then
+    rm -f Marlin/Configuration-MP.h
+fi
 rm -f Marlin/Config.h Marlin/Config-export.h
 
 set -e

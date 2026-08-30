@@ -26,10 +26,10 @@
 
 #include "MarlinSPI.h"
 
-static void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, uint8_t msb, uint32_t dataSize) {
+static void spi_init(spi_t *obj, uint32_t speed, TERN(BTTSKRMINI, SPIMode, spi_mode_e) mode, uint8_t msb, uint32_t dataSize) {
   spi_init(obj, speed, mode, msb);
   // spi_init set 8bit always
-  // TODO: copy the code from spi_init and handle data size, to avoid double init always!!
+  /// TODO: copy the code from spi_init and handle data size, to avoid double init always!!
   if (dataSize != SPI_DATASIZE_8BIT) {
     obj->handle.Init.DataSize = dataSize;
     HAL_SPI_Init(&obj->handle);
@@ -71,7 +71,7 @@ void MarlinSPI::setupDma(SPI_HandleTypeDef &_spiHandle, DMA_HandleTypeDef &_dmaH
   #endif
 
   // start DMA hardware
-  // TODO: check if hardware is already enabled
+  /// TODO: check if hardware is already enabled
   #ifdef SPI1_BASE
     if (_spiHandle.Instance == SPI1) {
       #ifdef STM32F1xx

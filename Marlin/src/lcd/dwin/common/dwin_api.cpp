@@ -21,7 +21,7 @@
  */
 #include "../../../inc/MarlinConfigPre.h"
 
-#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI || IS_DWIN_LCD_PROUI
+#if ANY(HAS_DWIN_E3V2, IS_DWIN_MARLINU, TJC_DISPLAY)
 
 #include "dwin_api.h"
 #include "dwin_set.h"
@@ -30,7 +30,6 @@
 #include "../../../inc/MarlinConfig.h"
 
 #include <string.h> // for memset
-
 uint8_t dwinSendBuf[11 + DWIN_WIDTH / 6 * 2] = { 0xAA };
 uint8_t dwinBufTail[4] = { 0xCC, 0x33, 0xC3, 0x3C };
 uint8_t databuf[26] = { 0 };
@@ -40,51 +39,44 @@ void dwinSend(size_t &i) {
   ++i;
   for (uint8_t n = 0; n < i; ++n) { LCD_SERIAL.write(dwinSendBuf[n]); delayMicroseconds(1); }
   for (uint8_t n = 0; n < 4; ++n) { LCD_SERIAL.write(dwinBufTail[n]); delayMicroseconds(1); }
-  //need_lcd_update = true;
 }
 
 /*-------------------------------------- System variable function --------------------------------------*/
 
+// Handshake (1: Success, 0: Fail)
 bool dwinHandshake() {
+  static int recnum = 0;
   #ifndef LCD_BAUDRATE
-    #define LCD_BAUDRATE 250000
+    #define LCD_BAUDRATE 115200
   #endif
-
+  
   LCD_SERIAL.begin(LCD_BAUDRATE);
-
   const millis_t serial_connect_timeout = millis() + 1000UL;
-  while (!LCD_SERIAL.connected() && PENDING(millis(), serial_connect_timeout)) {
-    /* nada */
-  }
+  while (!LCD_SERIAL.connected() && PENDING(millis(), serial_connect_timeout)) { /*nada*/ }
 
   size_t i = 0;
   dwinByte(i, 0x00);
   dwinSend(i);
 
-  constexpr uint8_t handshake_len = 4;
-  uint8_t recnum = 0;
-
-  ZERO(databuf);
-
-  const millis_t response_timeout = millis() + 1000UL;
-
-  while (recnum < handshake_len && PENDING(millis(), response_timeout)) {
-
-    if (!LCD_SERIAL.available()) {
-      delay(1);
+  while (LCD_SERIAL.available() > 0 && recnum < (signed)sizeof(databuf)) {
+    databuf[recnum] = LCD_SERIAL.read();
+    // ignore the invalid data
+    if (databuf[0] != FHONE) { // prevent the program from running.
+      if (recnum > 0) {
+        recnum = 0;
+        ZERO(databuf);
+      }
       continue;
     }
-
-    databuf[recnum++] = LCD_SERIAL.read();
+    delay(10);
+    recnum++;
   }
 
-  return (
-    recnum == handshake_len &&
-    databuf[0] == FHONE &&
-    databuf[1] == '\0' &&
-    databuf[2] == 'O' &&
-    databuf[3] == 'K'
-  );
+  return ( recnum >= 3
+        && databuf[0] == FHONE
+        && databuf[1] == '\0'
+        && databuf[2] == 'O'
+        && databuf[3] == 'K' );
 }
 
 #if HAS_LCD_BRIGHTNESS
@@ -546,5 +538,4 @@ void dwinIconAnimationControl(uint16_t state) {
 //  PicId: Picture Memory location, 0x00-0x0F
 //
 //  Flash writing returns 0xA5 0x4F 0x4B
-
 #endif // HAS_DWIN_E3V2 || IS_DWIN_MARLINUI

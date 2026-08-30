@@ -21,12 +21,13 @@
  */
 #pragma once
 
-//
-// File: pins/pins_postprocess.h
-// Post-process pins according to configured settings
-//
+/**
+ * pins_postprocess.h - Post-process pins according to configured settings
+ */
 
+//
 // Define certain undefined pins
+//
 #ifndef X_MS1_PIN
   #define X_MS1_PIN -1
 #endif
@@ -693,7 +694,6 @@
 //
 // Assign endstop pins, with handling for boards that have only 3 connectors
 //
-
 #if HAS_X_AXIS
   #if PIN_EXISTS(X_STOP)
     #if X_HOME_TO_MIN
@@ -1945,7 +1945,7 @@
 #endif
 
 // Undefine motor PWM pins for nonexistent axes since the existence of a MOTOR_CURRENT_PWM_*_PIN implies its standard use.
-// TODO: Allow remapping (e.g., E => Z2). Spec G-codes to use logical axis with index (e.g., to set Z2: Mxxx Z P1 Snnn).
+/// TODO: Allow remapping (e.g., E => Z2). Spec G-codes to use logical axis with index (e.g., to set Z2: Mxxx Z P1 Snnn).
 #if !HAS_X_AXIS
   #undef MOTOR_CURRENT_PWM_X_PIN
 #endif

@@ -251,6 +251,8 @@ Nozzle nozzle;
         _MIN(Z_MAX_POS,                         // Maximum height is fixed
           #ifdef NOZZLE_PARK_Z_RAISE_MIN
             NOZZLE_PARK_Z_RAISE_MIN +           // Minimum raise...
+          #else
+            Z_POST_CLEARANCE +                  // Minimum raise...
           #endif
           motion.position.z                    // ...over current position
         )
@@ -261,6 +263,7 @@ Nozzle nozzle;
   void Nozzle::park(const uint8_t z_action, const xyz_pos_t &park/*=NOZZLE_PARK_POINT*/) {
     #if HAS_Z_AXIS
       constexpr feedRate_t fr_z = NOZZLE_PARK_Z_FEEDRATE;
+      constexpr feedRate_t fr_xy = NOZZLE_PARK_XY_FEEDRATE;
 
       switch (z_action) {
         case 1:   // Go to Z-park height
@@ -285,20 +288,18 @@ Nozzle nozzle;
       }
     #endif // HAS_Z_AXIS
 
-    {
-      #ifndef NOZZLE_PARK_MOVE
-        #define NOZZLE_PARK_MOVE 0
-      #endif
-      constexpr feedRate_t fr_xy = NOZZLE_PARK_XY_FEEDRATE;
-      switch (NOZZLE_PARK_MOVE) {
-        case 0: motion.blocking_move_xy(park, fr_xy); break;
-        case 1: motion.blocking_move_x(park.x, fr_xy); break;
-        case 2: motion.blocking_move_y(park.y, fr_xy); break;
-        case 3: motion.blocking_move_x(park.x, fr_xy);
-                motion.blocking_move_y(park.y, fr_xy); break;
-        case 4: motion.blocking_move_y(park.y, fr_xy);
-                motion.blocking_move_x(park.x, fr_xy); break;
-      }
+    #ifndef NOZZLE_PARK_MOVE
+      #define NOZZLE_PARK_MOVE 0
+    #endif
+
+    switch (NOZZLE_PARK_MOVE) {
+      case 0: motion.blocking_move_xy(park, fr_xy); break;
+      case 1: motion.blocking_move_x(park.x, fr_xy); break;
+      case 2: motion.blocking_move_y(park.y, fr_xy); break;
+      case 3: motion.blocking_move_x(park.x, fr_xy);
+              motion.blocking_move_y(park.y, fr_xy); break;
+      case 4: motion.blocking_move_y(park.y, fr_xy);
+              motion.blocking_move_x(park.x, fr_xy); break;
     }
 
     SKIP_XY_MOVE:

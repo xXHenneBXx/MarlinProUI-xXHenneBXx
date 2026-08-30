@@ -27,7 +27,7 @@ set -e
 
 exec_test () {
   printf "\n\033[0;32m[Test $2] \033[0m$3...\n"
-  if [[ -z "$VERBOSE_PLATFORMIO" ]] ; then
+  if [[ -z "$VERBOSE_PLATFORMIO" ]]; then
     silent="--silent"
   else
     silent="-v"

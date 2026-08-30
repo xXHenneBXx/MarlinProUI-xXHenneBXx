@@ -153,9 +153,9 @@
    * If undefined software serial is used according to the pins below
    */
   #define X_HARDWARE_SERIAL  Serial6
-  #define Y_HARDWARE_SERIAL  X_HARDWARE_SERIAL
-  #define Z_HARDWARE_SERIAL  X_HARDWARE_SERIAL
-  #define E0_HARDWARE_SERIAL X_HARDWARE_SERIAL
+  #define Y_HARDWARE_SERIAL  Serial6
+  #define Z_HARDWARE_SERIAL  Serial6
+  #define E0_HARDWARE_SERIAL Serial6
 
   // Default TMC slave addresses
   #ifndef X_SLAVE_ADDRESS
@@ -242,7 +242,7 @@
     #define BEEPER_PIN               EXP1_01_PIN
   #endif
 
-#elif ENABLED(DWIN_CREALITY_LCD)
+#elif ENABLED(DWIN_LCD_PROUI)
 
   // DWIN ENCODER LCD
   #define BTN_ENC                    EXP1_05_PIN

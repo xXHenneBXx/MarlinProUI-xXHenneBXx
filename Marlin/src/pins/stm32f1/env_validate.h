@@ -35,7 +35,6 @@
 #endif
 
 #undef ALLOW_STM32F4
-#undef ALLOW_GD32F3
 #undef ALLOW_GD32F1
-
+#undef ALLOW_GD32F3
 #endif

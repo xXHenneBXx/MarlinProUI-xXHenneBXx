@@ -2,7 +2,7 @@
 #
 # Check for broken URLs in Marlin files
 #
-[ -d "Marlin/src" ] || { echo "Run this script from the Marlin project folder!" ; exit 1 ; }
+[ -d "Marlin/src" ] || { echo "Run this script from the Marlin project folder!"; exit 1; }
 
 UA="Mozilla/5.0 (Linux; Android 10; SM-G996U Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Mobile Safari/537.36"
 UTMP=$(mktemp)
@@ -11,7 +11,7 @@ echo "Gathering URLs. Please wait..."
 find Marlin/src -type f ! -path "*/\.*" -exec grep -Eo "https?:\/\/[^ \"'\$\<\>]+" {} \; 2>/dev/null \
   | sort -u -R \
   | grep -v "Binary file" \
-  | grep -v "/licenses" | grep -v "MarlinFirmware/Marlin" | grep -v "st.com/resource" \
+  | grep -v "/licenses" | grep -v "classicrocker883/MRiscoCProUI" | grep -v "st.com/resource" \
   | sed -E "s/\/https?:\/\//\//" \
   | sed -E 's/.*\((https?:\/\/[^ ]+)\).*$/\1/' \
   | sed -E 's/.*\[(https?:\/\/[^ ]+)\].*$/\1/' \
@@ -19,26 +19,27 @@ find Marlin/src -type f ! -path "*/\.*" -exec grep -Eo "https?:\/\/[^ \"'\$\<\>]
   | grep -vE "(127\.0\.0\.1|localhost|myserver|doc\.qt\.io|docs\.google\.com|raw\.githubusercontent\.com|[\${}])" \
   | sed -E 's/]$//' | sed -E "s/'$//" | sed -E "s/[#.',]+$//" \
   | sed -E 's/youtu\.be\/(.+)/www.youtube.com\/watch?v=\1/' \
-  >"$UTMP"
+  > "$UTMP"
 
-  #echo "[debug 2] link count = $(wc -l $UTMP)"
-  ISERR=
-  declare -a BADURLS
-  while IFS= read -r URL
-  do
+#echo "[debug 2] link count = $(wc -l $UTMP)"
+ISERR=
+declare -a BADURLS
+while IFS= read -r URL
+do
     #echo -n "Checking ${URL} ... "
-    HEAD=$(curl -s -I -A "${UA}" --request GET "${URL}" 2>/dev/null) ; HERR=$?
+    HEAD=$(curl -s -I -A "${UA}" --request GET "${URL}" 2>/dev/null)
+    HERR=$?
     if [[ $HERR > 0 ]]; then
       # Error 92 may be domain blocking curl / wget
-      [[ $HERR == 92 ]] || { ISERR=1 ; BADURLS+=($URL) ; }
+      [[ $HERR == 92 ]] || { ISERR=1; BADURLS+=($URL); }
       echo "${URL} ... [FAIL ($HERR)]"
     else
-      HEAD1=$(echo $HEAD | head -n1)
+      HEAD1=$(echo "$HEAD" | head -n1)
       EMSG=
       WHERE=
       case "$HEAD1" in
-        *" 301"*) EMSG="[Moved Permanently]" ; WHERE=1 ;;
-        *" 302"*) EMSG="[Moved Temporarily]" ; WHERE=1 ;;
+        *" 301"*) EMSG="[Moved Permanently]"; WHERE=1 ;;
+        *" 302"*) EMSG="[Moved Temporarily]"; WHERE=1 ;;
         *" 303"*) echo "[See Other]" ;;
         *" 400"*) EMSG="[Invalid Request]" ;;
         *" 403"*) EMSG="[Forbidden]" ;;
@@ -50,22 +51,20 @@ find Marlin/src -type f ! -path "*/\.*" -exec grep -Eo "https?:\/\/[^ \"'\$\<\>]
       if [[ -n $EMSG ]]; then
         echo -n "${URL} ... "
         if [[ -n $WHERE ]]; then
-          [[ ${HEAD,,} =~ "location: " ]] && EMSG+=" to $(echo "$HEAD" | grep -i "location: " | sed -E 's/location: (.*)/\1/')"
+          [[ ${HEAD,,} =~ "location: " ]] && EMSG+=" to $(echo $HEAD | grep -i 'location: ' | sed -E 's/location: (.*)/\1/')"
         else
-          ISERR=1 ; BADURLS+=($URL)
+          ISERR=1; BADURLS+=($URL)
         fi
-        echo $EMSG
-      fi
     fi
-  done <"$UTMP"
+done < "$UTMP"
 
-  #echo "[debug 3]"
-  if [[ -n $ISERR ]]; then
+#echo "[debug 3]"
+if [[ -n $ISERR ]]; then
     # Join bad URLs into a bulleted markdown list
     printf -v BADSTR -- "- %s\n" "${BADURLS[@]}"
     echo -e "\nURL Checker reports one or more URLs could not be reached:\n${BADSTR}"
     exit 1
-  fi
+fi
 
-  echo -e "\nURL Check Passed."
-  exit 0
+echo -e "\nURL Check Passed."
+exit 0

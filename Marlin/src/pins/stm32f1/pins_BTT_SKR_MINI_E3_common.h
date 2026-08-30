@@ -157,7 +157,7 @@
 #define TFT_02                              PA3
 #define TFT_03                              PA2
 
-#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
+#if ANY(HAS_DWIN_E3V2, IS_DWIN_MARLINUI)
 
   CONTROLLER_WARNING("BTT_SKR_MINI_E3_common", "Ender-3 V2 display")
 

@@ -109,7 +109,7 @@ FORCE_INLINE static hal_timer_t HAL_timer_get_count(const uint8_t timer_num) {
   return HAL_timer_initialized(timer_num) ? timer_instance[timer_num]->getCount() : 0;
 }
 
-// NOTE: Method name may be misleading.
+/// NOTE: Method name may be misleading.
 // STM32 has an Auto-Reload Register (ARR) as opposed to a "compare" register
 FORCE_INLINE static void HAL_timer_set_compare(const uint8_t timer_num, const hal_timer_t overflow) {
   if (HAL_timer_initialized(timer_num)) {
@@ -123,3 +123,15 @@ FORCE_INLINE static void HAL_timer_set_compare(const uint8_t timer_num, const ha
 
 inline void HAL_timer_isr_prologue(const uint8_t) {}
 inline void HAL_timer_isr_epilogue(const uint8_t) {}
+
+// Support for Creality CV Laser module
+// Code from CrealityOfficial laser support repository:
+// https://github.com/CrealityOfficial/Ender-3S1/tree/ender-3s1-lasermodel
+// 107011 激光模式
+#define LASER_TIMER_FREQUENCY          1000 // PWM freq:1000Hz
+#define LASER_TIMER_PWM_MAX             255 // PWM value range: 0~255
+
+void laser_timer_soft_pwm_init();
+void laser_timer_soft_pwm_start(uint8_t pwm);
+void laser_timer_soft_pwm_stop(void);
+void laser_timer_soft_pwm_close();

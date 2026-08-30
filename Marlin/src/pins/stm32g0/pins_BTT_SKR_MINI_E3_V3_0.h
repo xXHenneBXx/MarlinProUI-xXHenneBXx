@@ -203,7 +203,7 @@
    * All pins are labeled as printed on DWIN PCB. Connect TX-TX, A-A and so on.
    */
 
-  CONTROLLER_WARNING("BTT_SKR_MINI_E3_V3_0", "DWIN_CREALITY_LCD", " Requires a custom cable.")
+  CONTROLLER_WARNING("BTT_SKR_MINI_E3_V3_0", "DWIN_LCD_PROUI", " Requires a custom cable.")
 
   #define BEEPER_PIN                 EXP1_02_PIN
   #define BTN_EN1                    EXP1_08_PIN
@@ -357,7 +357,7 @@
        *                Neopixel                               EXP2
        *
        * Needs custom cable. Connect EN2-EN2, LCD_CS-LCD_CS and so on.
-       * Note: The RESET line is connected to 3 pins.
+       * NOTE: The RESET line is connected to 3 pins.
        *
        * Check the index/notch position twice!!!
        * On BTT boards pins from IDC10 connector are numbered in unusual order.
@@ -470,3 +470,18 @@
 #define UART2_RX_PIN                        PA3   // default usage TFT connector
 #define UART4_TX_PIN                        PC10  // default usage TMC UART
 #define UART4_RX_PIN                        PC11  // default usage TMC UART
+
+//
+// M3/M4/M5 - Spindle/Laser Control
+//
+#if HAS_CUTTER
+  //#define HEATER_0_PIN                    -1
+  //#define HEATER_BED_PIN                  -1
+  #if DISABLED(CV_LASER_MODULE)
+    #define FAN0_PIN                        -1
+  #endif
+  #define SPINDLE_LASER_ENA_PIN             PA8   // FET 1
+  #define SPINDLE_LASER_PWM_PIN             PA8   // Bed FET
+  #define SPINDLE_DIR_PIN                   PA8   // FET 4
+  #define LASER_SOFT_PWM_PIN                PA8
+#endif

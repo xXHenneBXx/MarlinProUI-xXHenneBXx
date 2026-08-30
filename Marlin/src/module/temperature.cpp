@@ -50,6 +50,10 @@
   #include "motion.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 #if ENABLED(DWIN_CREALITY_LCD)
   #include "../lcd/dwin/creality/dwin.h"
 #elif ENABLED(SOVOL_SV06_RTS)

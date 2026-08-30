@@ -18,7 +18,7 @@ def find_files(root, mindepth, pattern):
     return results
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6 or sys.argv[2] != '-mindepth' or sys.argv[4] != '-name':
+    if len(sys.argv) != 6 or sys.argv[2] != "-mindepth" or sys.argv[4] != "-name":
         print("Usage: find.py <dir> -mindepth <num> -name <pattern>", file=sys.stderr)
         sys.exit(1)
     root = sys.argv[1]
@@ -26,4 +26,4 @@ if __name__ == "__main__":
     pattern = sys.argv[5]
     files = find_files(root, mindepth, pattern)
     for f in files:
-        print(f.replace('\\', '/'))
+        print(f.replace("\\", "/"))

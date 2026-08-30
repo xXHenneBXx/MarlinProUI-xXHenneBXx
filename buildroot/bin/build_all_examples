@@ -25,7 +25,7 @@ PATH="$HERE:$PATH"
 
 . mfutil
 
-GITREPO=https://github.com/MarlinFirmware/Configurations.git
+GITREPO=https://github.com/classicrocker883/MRiscoCProUI.git
 STAT_FILE=./.pio/.buildall
 
 usage() { echo "Usage:
@@ -102,7 +102,7 @@ shift $((OPTIND - 1))
 
 # Assume import-2.1.x if no --base or --branch is given.
 # If no --base is supplied, one will be created.
-[[ -z $BRANCH && -z $CBASE ]] && BRANCH=import-2.1.x
+[[ -z $BRANCH && -z $CBASE ]] && BRANCH=2026-August
 
 # Exit with helpful usage information
 ((EXIT_USAGE)) && { usage ; let EXIT_USAGE-- ; exit $EXIT_USAGE ; }
@@ -167,7 +167,7 @@ export PAUSE=1
 while IFS= read -r -d '' CONF; do
 
   # Get a config's directory name
-  DIR=${CONF#$CBASE/config/examples/}
+  DIR=${CONF#$CBASE/configurations/}
 
   # If looking for a config, skip others
   [[ $FIRST_CONF ]] && [[ $FIRST_CONF != $DIR && "$FIRST_CONF/" != $DIR ]] && { ((DEBUG)) && echo "[SKIP] $DIR" ; continue ; }
@@ -213,7 +213,7 @@ while IFS= read -r -d '' CONF; do
   export PAUSE=0
 
 done < <(
-  find "$CBASE/config/examples" \
+  find "$CBASE/configurations" \
     -type f \( -name Configuration.h -o -name Configuration_adv.h \) \
     -exec dirname {} \; |
   LC_ALL=C sort -zu |

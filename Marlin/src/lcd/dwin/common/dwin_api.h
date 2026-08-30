@@ -67,8 +67,7 @@ inline void dwinLong(size_t &i, const uint32_t lval) {
   dwinSendBuf[++i] = lval & 0xFF;
 }
 
-// Send the data in the buffer plus the packet tail
-void dwinSend(size_t &i);
+void dwinSend(size_t &i);  
 
 inline void dwinText(size_t &i, const char * const string, uint16_t rlimit=0xFFFF) {
   if (!string) return;

@@ -134,28 +134,28 @@ uint16_t MarlinHAL::adc_result;
 // Init the ADC in continuous capture mode
 void MarlinHAL::adc_init() {
   static const uint8_t adc_pins[] = {
-    OPTITEM(HAS_TEMP_ADC_0,         TEMP_0_PIN               )
-    OPTITEM(HAS_TEMP_ADC_1,         TEMP_1_PIN               )
-    OPTITEM(HAS_TEMP_ADC_2,         TEMP_2_PIN               )
-    OPTITEM(HAS_TEMP_ADC_3,         TEMP_3_PIN               )
-    OPTITEM(HAS_TEMP_ADC_4,         TEMP_4_PIN               )
-    OPTITEM(HAS_TEMP_ADC_5,         TEMP_5_PIN               )
-    OPTITEM(HAS_TEMP_ADC_6,         TEMP_6_PIN               )
-    OPTITEM(HAS_TEMP_ADC_7,         TEMP_7_PIN               )
-    OPTITEM(HAS_TEMP_ADC_BED,       TEMP_BED_PIN             )
-    OPTITEM(HAS_TEMP_ADC_CHAMBER,   TEMP_CHAMBER_PIN         )
-    OPTITEM(HAS_TEMP_ADC_PROBE,     TEMP_PROBE_PIN           )
-    OPTITEM(HAS_TEMP_ADC_COOLER,    TEMP_COOLER_PIN          )
-    OPTITEM(HAS_TEMP_ADC_BOARD,     TEMP_BOARD_PIN           )
-    OPTITEM(HAS_TEMP_ADC_SOC,       TEMP_SOC_PIN             )
-    OPTITEM(HAS_FILWIDTH_ADC,       FILWIDTH_PIN             )
-    OPTITEM(HAS_FILWIDTH2_ADC,      FILWIDTH2_PIN            )
-    OPTITEM(HAS_ADC_BUTTONS,        ADC_KEYPAD_PIN           )
-    OPTITEM(HAS_JOY_ADC_X,          JOY_X_PIN                )
-    OPTITEM(HAS_JOY_ADC_Y,          JOY_Y_PIN                )
-    OPTITEM(HAS_JOY_ADC_Z,          JOY_Z_PIN                )
-    OPTITEM(POWER_MONITOR_CURRENT,  POWER_MONITOR_CURRENT_PIN)
-    OPTITEM(POWER_MONITOR_VOLTAGE,  POWER_MONITOR_VOLTAGE_PIN)
+    OPTITEM(HAS_TEMP_ADC_0,        TEMP_0_PIN               )
+    OPTITEM(HAS_TEMP_ADC_1,        TEMP_1_PIN               )
+    OPTITEM(HAS_TEMP_ADC_2,        TEMP_2_PIN               )
+    OPTITEM(HAS_TEMP_ADC_3,        TEMP_3_PIN               )
+    OPTITEM(HAS_TEMP_ADC_4,        TEMP_4_PIN               )
+    OPTITEM(HAS_TEMP_ADC_5,        TEMP_5_PIN               )
+    OPTITEM(HAS_TEMP_ADC_6,        TEMP_6_PIN               )
+    OPTITEM(HAS_TEMP_ADC_7,        TEMP_7_PIN               )
+    OPTITEM(HAS_TEMP_ADC_BED,      TEMP_BED_PIN             )
+    OPTITEM(HAS_TEMP_ADC_CHAMBER,  TEMP_CHAMBER_PIN         )
+    OPTITEM(HAS_TEMP_ADC_PROBE,    TEMP_PROBE_PIN           )
+    OPTITEM(HAS_TEMP_ADC_COOLER,   TEMP_COOLER_PIN          )
+    OPTITEM(HAS_TEMP_ADC_BOARD,    TEMP_BOARD_PIN           )
+    OPTITEM(HAS_TEMP_ADC_SOC,      TEMP_SOC_PIN             )
+    OPTITEM(HAS_FILWIDTH_ADC,      FILWIDTH_PIN             )
+    OPTITEM(HAS_FILWIDTH2_ADC,     FILWIDTH2_PIN            )
+    OPTITEM(HAS_ADC_BUTTONS,       ADC_KEYPAD_PIN           )
+    OPTITEM(HAS_JOY_ADC_X,         JOY_X_PIN                )
+    OPTITEM(HAS_JOY_ADC_Y,         JOY_Y_PIN                )
+    OPTITEM(HAS_JOY_ADC_Z,         JOY_Z_PIN                )
+    OPTITEM(POWER_MONITOR_CURRENT, POWER_MONITOR_CURRENT_PIN)
+    OPTITEM(POWER_MONITOR_VOLTAGE, POWER_MONITOR_VOLTAGE_PIN)
   };
   static STM32ADC adc(ADC1);
   // Configure the ADC
@@ -167,7 +167,8 @@ void MarlinHAL::adc_init() {
   adc.setContinuous();
   adc.startConversion();
 }
-
+#elif HAS_N32_CR10
+  #include "HAL_N32.h"
 #endif // !VOXELAB_N32
 
 void MarlinHAL::adc_start(const pin_t pin) {
@@ -176,30 +177,49 @@ void MarlinHAL::adc_start(const pin_t pin) {
   ADCIndex pin_index;
   switch (pin) {
     default: return;
-    _TCASE(HAS_TEMP_ADC_0,         TEMP_0_PIN,                TEMP_0          )
-    _TCASE(HAS_TEMP_ADC_1,         TEMP_1_PIN,                TEMP_1          )
-    _TCASE(HAS_TEMP_ADC_2,         TEMP_2_PIN,                TEMP_2          )
-    _TCASE(HAS_TEMP_ADC_3,         TEMP_3_PIN,                TEMP_3          )
-    _TCASE(HAS_TEMP_ADC_4,         TEMP_4_PIN,                TEMP_4          )
-    _TCASE(HAS_TEMP_ADC_5,         TEMP_5_PIN,                TEMP_5          )
-    _TCASE(HAS_TEMP_ADC_6,         TEMP_6_PIN,                TEMP_6          )
-    _TCASE(HAS_TEMP_ADC_7,         TEMP_7_PIN,                TEMP_7          )
-    _TCASE(HAS_TEMP_ADC_BED,       TEMP_BED_PIN,              TEMP_BED        )
-    _TCASE(HAS_TEMP_ADC_CHAMBER,   TEMP_CHAMBER_PIN,          TEMP_CHAMBER    )
-    _TCASE(HAS_TEMP_ADC_PROBE,     TEMP_PROBE_PIN,            TEMP_PROBE      )
-    _TCASE(HAS_TEMP_ADC_COOLER,    TEMP_COOLER_PIN,           TEMP_COOLER     )
-    _TCASE(HAS_TEMP_ADC_BOARD,     TEMP_BOARD_PIN,            TEMP_BOARD      )
-    _TCASE(HAS_TEMP_ADC_SOC,       TEMP_SOC_PIN,              TEMP_SOC        )
-    _TCASE(HAS_FILWIDTH_ADC,       FILWIDTH_PIN,              FILWIDTH        )
-    _TCASE(HAS_FILWIDTH2_ADC,      FILWIDTH2_PIN,             FILWIDTH2       )
-    _TCASE(HAS_ADC_BUTTONS,        ADC_KEYPAD_PIN,            ADC_KEY         )
-    _TCASE(HAS_JOY_ADC_X,          JOY_X_PIN,                 JOY_X           )
-    _TCASE(HAS_JOY_ADC_Y,          JOY_Y_PIN,                 JOY_Y           )
-    _TCASE(HAS_JOY_ADC_Z,          JOY_Z_PIN,                 JOY_Z           )
-    _TCASE(POWER_MONITOR_CURRENT,  POWER_MONITOR_CURRENT_PIN, POWERMON_CURRENT)
-    _TCASE(POWER_MONITOR_VOLTAGE,  POWER_MONITOR_VOLTAGE_PIN, POWERMON_VOLTAGE)
+    _TCASE(HAS_TEMP_ADC_0,        TEMP_0_PIN,                TEMP_0          )
+    _TCASE(HAS_TEMP_ADC_1,        TEMP_1_PIN,                TEMP_1          )
+    _TCASE(HAS_TEMP_ADC_2,        TEMP_2_PIN,                TEMP_2          )
+    _TCASE(HAS_TEMP_ADC_3,        TEMP_3_PIN,                TEMP_3          )
+    _TCASE(HAS_TEMP_ADC_4,        TEMP_4_PIN,                TEMP_4          )
+    _TCASE(HAS_TEMP_ADC_5,        TEMP_5_PIN,                TEMP_5          )
+    _TCASE(HAS_TEMP_ADC_6,        TEMP_6_PIN,                TEMP_6          )
+    _TCASE(HAS_TEMP_ADC_7,        TEMP_7_PIN,                TEMP_7          )
+    _TCASE(HAS_TEMP_ADC_BED,      TEMP_BED_PIN,              TEMP_BED        )
+    _TCASE(HAS_TEMP_ADC_CHAMBER,  TEMP_CHAMBER_PIN,          TEMP_CHAMBER    )
+    _TCASE(HAS_TEMP_ADC_PROBE,    TEMP_PROBE_PIN,            TEMP_PROBE      )
+    _TCASE(HAS_TEMP_ADC_COOLER,   TEMP_COOLER_PIN,           TEMP_COOLER     )
+    _TCASE(HAS_TEMP_ADC_BOARD,    TEMP_BOARD_PIN,            TEMP_BOARD      )
+    _TCASE(HAS_TEMP_ADC_SOC,      TEMP_SOC_PIN,              TEMP_SOC        )
+    _TCASE(HAS_FILWIDTH_ADC,      FILWIDTH_PIN,              FILWIDTH        )
+    _TCASE(HAS_FILWIDTH2_ADC,     FILWIDTH2_PIN,             FILWIDTH2       )
+    _TCASE(HAS_ADC_BUTTONS,       ADC_KEYPAD_PIN,            ADC_KEY         )
+    _TCASE(HAS_JOY_ADC_X,         JOY_X_PIN,                 JOY_X           )
+    _TCASE(HAS_JOY_ADC_Y,         JOY_Y_PIN,                 JOY_Y           )
+    _TCASE(HAS_JOY_ADC_Z,         JOY_Z_PIN,                 JOY_Z           )
+    _TCASE(POWER_MONITOR_CURRENT, POWER_MONITOR_CURRENT_PIN, POWERMON_CURRENT)
+    _TCASE(POWER_MONITOR_VOLTAGE, POWER_MONITOR_VOLTAGE_PIN, POWERMON_VOLTAGE)
   }
-  adc_result = (adc_results[(int)pin_index] & 0xFFF) >> (12 - HAL_ADC_RESOLUTION); // shift out unused bits
+
+  #if DISABLED(HAS_N32_CR10)
+    adc_result = (adc_results[(int)pin_index] & 0xFFF) >> (12 - HAL_ADC_RESOLUTION); // shift out unused bits
+  #else
+    ADC_Initial(USE_ADC);
+
+    switch (pin_index) {
+      case TEMP_0:
+      adc_result =  ADC_GetData(USE_ADC, ADC2_Channel_02_PA5);
+      adc_result =  ADC_GetData(USE_ADC, ADC2_Channel_02_PA5);
+        break;
+      case TEMP_BED:
+      adc_result =  ADC_GetData(USE_ADC, ADC2_Channel_01_PA4);
+      adc_result =  ADC_GetData(USE_ADC, ADC2_Channel_01_PA4);
+        break;
+      default:
+        break;
+    }
+    adc_result = (adc_result >> 2) & 0x3FF;
+   #endif
 }
 
 // ------------------------
@@ -273,7 +293,8 @@ void MarlinHAL::idletask() {
      * command so drives can be released as needed.
      */
     /* Copied from LPC1768 framework. Should be fixed later to process HAS_SD_HOST_DRIVE */
-    //if (!drive_locked()) // TODO
+    //if (!drive_locked())
+    /// TODO:
     MarlinMSC.loop(); // Process USB mass storage device class loop
   #endif
 }

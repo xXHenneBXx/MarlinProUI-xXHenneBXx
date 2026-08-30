@@ -73,7 +73,7 @@ UnwResult UnwStartArm(UnwState * const state) {
     if ((instr & 0xFFFFFFF0) == 0xE12FFF10) {
       uint8_t rn = instr & 0xF;
 
-      UnwPrintd4("BX r%d\t ; r%d %s\n", rn, rn, M_Origin2Str(state->regData[rn].o));
+      UnwPrintd4("BX r%d\t; r%d %s\n", rn, rn, M_Origin2Str(state->regData[rn].o));
 
       if (!M_IsOriginValid(state->regData[rn].o)) {
         UnwPrintd1("\nUnwind failure: BX to untracked register\n");
@@ -202,7 +202,7 @@ UnwResult UnwStartArm(UnwState * const state) {
         #ifdef UNW_DEBUG
           const char * const shiftMnu[4] = { "LSL", "LSR", "ASR", "ROR" };
         #endif
-        UnwPrintd2("r%d ", rm);
+        UnwPrintd2("r%d", rm);
 
         /* Get the shift distance */
         if (regShift) {
@@ -238,12 +238,14 @@ UnwResult UnwStartArm(UnwState * const state) {
 
           case 1: /* logical right */
             if (!regShift && shiftDist == 0) shiftDist = 32;
-            op2val = state->regData[rm].v >> shiftDist;
+            if (shiftDist >= 32)
+              op2val = 0;
+            else
+              op2val = state->regData[rm].v >> shiftDist;
             break;
 
           case 2: /* arithmetic right */
             if (!regShift && shiftDist == 0) shiftDist = 32;
-
             if (state->regData[rm].v & 0x80000000) {
               /* Register shifts maybe greater than 32 */
               if (shiftDist >= 32)
@@ -256,7 +258,6 @@ UnwResult UnwStartArm(UnwState * const state) {
             break;
 
           case 3: /* rotate right */
-
             if (!regShift && shiftDist == 0) {
               /* Rotate right with extend.
                *  This uses the carry bit and so always has an
@@ -452,19 +453,19 @@ UnwResult UnwStartArm(UnwState * const state) {
               if (M_IsOriginValid(state->regData[r].o) && baseReg == 13)
                 state->regData[r].o = REG_VAL_FROM_STACK;
 
-              UnwPrintd5(" R%d = 0x%08x\t; r%d %s\n",r,state->regData[r].v,r, M_Origin2Str(state->regData[r].o));
+              UnwPrintd5(" R%d=0x%08x\t; r%d %s\n", r, state->regData[r].v, r, M_Origin2Str(state->regData[r].o));
             }
             else {
               /* Invalidate the register as the base reg was invalid */
               state->regData[r].o = REG_VAL_INVALID;
-              UnwPrintd2(" R%d = ???\n", r);
+              UnwPrintd2(" R%d=???\n", r);
             }
           }
           else {
             if (addrValid && !UnwMemWriteRegister(state, state->regData[13].v, &state->regData[r]))
               return UNWIND_DWRITE_W_FAIL;
 
-            UnwPrintd2(" R%d = 0x%08x\n", r);
+            UnwPrintd2(" R%d=0x%08x\n", r);
           }
 
           if (!P) addr += U ? 4 : -4;

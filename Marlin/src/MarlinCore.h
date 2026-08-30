@@ -116,3 +116,5 @@ public:
 extern Marlin marlin;
 
 extern const char M112_KILL_STR[];
+
+extern bool wait_for_heatup; // Undefined reference workaround

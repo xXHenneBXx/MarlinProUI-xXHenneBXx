@@ -30,12 +30,11 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
 
 #include "dwin.h"
 #include "menus.h"
 #include "dwin_popup.h"
-
 #include "../../utf8.h"
 #include "../../marlinui.h"
 #include "../../extui/ui_api.h"
@@ -1057,7 +1056,7 @@ void hmiSDCardUpdate() {
       currentMenu = nullptr;
       drawPrintFileMenu();
     }
-    if (!DWIN_lcd_sd_status && sdPrinting()) ExtUI::stopPrint();  // Media removed while printing
+    if (!DWIN_lcd_sd_status && sdPrinting()) ui.abort_print();  // Media removed while printing
   }
 }
 
@@ -1181,8 +1180,8 @@ void hmiMainMenu() {
 // Pause or Stop popup
 void onClickPauseOrStop() {
   switch (select_print.now) {
-    case PRINT_PAUSE_RESUME: if (hmiFlag.select_flag) ExtUI::pausePrint(); break; // Confirm pause
-    case PRINT_STOP: if (hmiFlag.select_flag) ExtUI::stopPrint(); break; // Stop confirmed then abort print
+    case PRINT_PAUSE_RESUME: if (hmiFlag.select_flag) ui.pause_print(); break; // Confirm pause
+    case PRINT_STOP: if (hmiFlag.select_flag) ui.abort_print(); break; // Stop confirmed then abort print
     default: break;
   }
   gotoPrintProcess();
@@ -1216,7 +1215,7 @@ void hmiPrinting() {
       case PRINT_SETUP: drawTuneMenu(); break;
       case PRINT_PAUSE_RESUME:
         if (marlin.printingIsPaused()) {  // If printer is already in pause
-          ExtUI::resumePrint();
+          ui.resume_print();
           break;
         }
         gotoPopup(popupPauseOrStop, onClickPauseOrStop);
@@ -1858,7 +1857,7 @@ void dwinPrintFinished() {
 // Print was aborted
 void dwinPrintAborted() {
   #ifndef EVENT_GCODE_SD_ABORT
-    if (ExtUI::isMachineHomed()) {
+    if (motion.all_axes_homed()) {
       queue.inject(
         #if ENABLED(NOZZLE_PARK_FEATURE)
           F("G27")
@@ -1994,20 +1993,9 @@ void dwinRedrawScreen() {
 //
 void MarlinUI::init_lcd() {
   delay(750); // Wait to wakeup screen
-
-  const bool hs = dwinHandshake();
-  UNUSED(hs);
-
-  #if ENABLED(DEBUG_DWIN)
-    SERIAL_ECHOPGM("dwinHandshake ");
-    SERIAL_ECHOLN(hs ? F("ok.") : F("error."));
-  #endif
-
+  const bool hs = dwinHandshake(); UNUSED(hs);
   dwinFrameSetDir(1);
-
   dwinJPGCacheTo1(Language_English);
-
-  dwinUpdateLCD();
 }
 
 void MarlinUI::clear_lcd() {}

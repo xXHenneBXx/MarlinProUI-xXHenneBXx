@@ -30,10 +30,11 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
 
 #include "dwinui.h"
 #include "dwin_defines.h"
+#include "dwin_lcd.h"					 
 
 xy_int_t DWINUI::cursor = { 0 };
 uint16_t DWINUI::penColor = COLOR_WHITE;
@@ -211,7 +212,17 @@ void DWINUI::drawFloat(uint8_t bShow, bool signedMode, fontid_t fid, uint16_t co
 //  picID: Icon ID
 //  x/y: Upper-left point
 void DWINUI::iconShow(bool BG, uint8_t icon, uint16_t x, uint16_t y) {
-  const uint8_t libID = icon TERN_(HAS_CUSTOMICONS, + (icon / 100));
+  // xXHenneBXx fix: libID must be the fixed ICON library constant (7, your custom
+  // 7.ICO set) plus an optional block offset for icons past 99 - NOT the icon index
+  // itself. The previous `icon TERN_(...)` used the index for both libID and picID,
+  // so for any icon < 100 (icon/100 == 0) libID silently collapsed to == icon,
+  // meaning every request mirrored its own index as the library number instead of
+  // staying fixed at 7. Low-index icons (<92) happened to still render because
+  // library 9 - the TJC panel's built-in stock set - exists on-panel regardless of
+  // what you've uploaded, and defines the same indices identically up to 91. Custom
+  // icons at 93+ (ICON_Box, ICON_Checkbox, and everything else you added) have no
+  // matching library at that number at all, hence flat color instead of a graphic.
+  const uint8_t libID = ICON TERN_(HAS_CUSTOMICONS, + (icon / 100));
   const uint8_t picID = icon TERN_(HAS_CUSTOMICONS, % 100);
   dwinIconShow(BG, false, !BG, libID, picID, x, y);
 }
@@ -327,4 +338,4 @@ void Title::frameCopy(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
   frameCopy(1, x, y, x + w - 1, y + h - 1);
 }
 
-#endif // DWIN_LCD_PROUI
+#endif // DWIN_LCD_PROUI  && TJC_DISPLAY

@@ -30,7 +30,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ALL(DWIN_LCD_PROUI, PRINTCOUNTER)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY) && ENABLED(PRINTCOUNTER)
 
 #include "dwin_popup.h"
 #include "printstats.h"
@@ -61,22 +61,23 @@ void PrintStats::draw() {
   DWINUI::drawString(MRG, 160, TS(GET_TEXT_F(MSG_INFO_PRINT_FILAMENT), F(": "), p_float_t(ps.filamentUsed / 1000, 2), F(" m")));
 }
 
-void PrintStats::reset() {
-  print_job_timer.initStats();
-  DONE_BUZZ(true);
-}
-
 void gotoPrintStats() {
   printStats.draw();
   hmiSaveProcessID(ID_WaitResponse);
 }
 
+void printStatsReset() {
+  dwinPopupConfirmCancel(ICON_Info_0, GET_TEXT_F(MSG_RESET_STATS));
+}
+
 // Print Stats Reset popup
-void popupResetStats() { dwinPopupConfirmCancel(ICON_Info_0, GET_TEXT_F(MSG_RESET_STATS)); }
+void popupResetStats() {
+  dwinPopupConfirmCancel(ICON_Info_0, GET_TEXT_F(MSG_RESET_STATS));
+}
+
 void onClickResetStats() {
   if (hmiFlag.select_flag) printStats.reset();
   hmiReturnScreen();
 }
-void printStatsReset() { gotoPopup(popupResetStats, onClickResetStats); }
 
 #endif // DWIN_LCD_PROUI && PRINTCOUNTER

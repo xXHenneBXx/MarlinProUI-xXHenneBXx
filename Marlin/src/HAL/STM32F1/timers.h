@@ -52,7 +52,7 @@ typedef uint16_t hal_timer_t;
 #endif
 
 /**
- * Note: Timers may be used by platforms and libraries
+ * NOTE: Timers may be used by platforms and libraries
  *
  * FAN PWMs:
  *   With FAN_SOFT_PWM disabled the Temperature class uses
@@ -119,7 +119,7 @@ timer_dev* HAL_get_timer_dev(int number);
 
 #define HAL_timer_get_count(timer_num) timer_get_count(TIMER_DEV(timer_num))
 
-// TODO change this
+/// TODO: change this
 
 #ifndef HAL_TEMP_TIMER_ISR
   #define HAL_TEMP_TIMER_ISR() extern "C" void tempTC_Handler()
@@ -157,13 +157,13 @@ bool HAL_timer_interrupt_enabled(const uint8_t timer_num);
  * so we can change the ARR value on the fly (without calling refresh), and not get an interrupt right there because we caused an UEV.
  * This mode pretty much makes 2 timers unusable for PWM since they have their counts updated all the time on ISRs.
  * The way Marlin manages timer interrupts doesn't make for an efficient usage in STM32F1
- * Todo: Look at that possibility later.
+ * TODO: Look at that possibility later.
  */
 
 FORCE_INLINE static void HAL_timer_set_compare(const uint8_t timer_num, const hal_timer_t compare) {
   switch (timer_num) {
   case MF_TIMER_STEP:
-    // NOTE: WE have set ARPE = 0, which means the Auto reload register is not preloaded
+    /// NOTE: WE have set ARPE = 0, which means the Auto reload register is not preloaded
     // and there is no need to use any compare, as in the timer mode used, setting ARR to the compare value
     // will result in exactly the same effect, ie triggering an interrupt, and on top, set counter to 0
     timer_set_reload(STEP_TIMER_DEV, compare); // We reload direct ARR as needed during counting up
@@ -198,3 +198,21 @@ FORCE_INLINE static void timer_no_ARR_preload_ARPE(timer_dev *dev) {
 void HAL_timer_set_interrupt_priority(uint_fast8_t timer_num, uint_fast8_t priority);
 
 #define TIMER_OC_NO_PRELOAD 0 // Need to disable preload also on compare registers.
+
+// Support for Creality CV Laser module
+// Code from CrealityOfficial laser support repository:
+// https://github.com/CrealityOfficial/Ender-3S1/tree/ender-3s1-lasermodel
+// 107011 激光模式
+
+#define LASER_TIMER_NUM	               3
+#define LASER_TIMER_DEV	               TIMER_DEV(LASER_TIMER_NUM)
+#define LASER_TIMER_FREQUENCY          1000 // PWM freq:1000Hz
+#define LASER_TIMER_PWM_MAX             255 // PWM value range: 0~255
+#define LASER_TIMER_PRESCALE(freq)     (HAL_TIMER_RATE / (freq * (LASER_TIMER_PWM_MAX + 1))) // (72M/1000*256)=281
+#define LASER_TIMER_CHAN		           1
+#define LASER_TIMER_IRQ_PRIO	         1
+
+void laser_timer_soft_pwm_init();
+void laser_timer_soft_pwm_start(uint8_t pwm);
+void laser_timer_soft_pwm_stop(void);
+void laser_timer_soft_pwm_close();

@@ -26,6 +26,7 @@
  * Sold as "Creality Ender-3 V3 SE CR4NS200320C13 Motherboard"
  * Preliminary support for the Professional Firmwware
  */
+ 
 
 #include "env_validate.h"
 
@@ -33,11 +34,16 @@
   #error "CR4NS200320C13 only supports one hotend / E-stepper."
 #endif
 
-#ifndef BOARD_INFO_NAME
-  #define BOARD_INFO_NAME      "CR4NS200320C13"
-#endif
-#ifndef DEFAULT_MACHINE_NAME
-  #define DEFAULT_MACHINE_NAME "Ender-3 V3 SE"
+#ifdef MB()
+  #define BOARD_INFO_NAME      "Creality V4.2.2 MFL"
+  #define DEFAULT_MACHINE_NAME "Ender-3 MFL"
+  #else
+    #ifndef BOARD_INFO_NAME
+      #define BOARD_INFO_NAME      "CR4NS200320C13"
+    #endif
+    #ifndef DEFAULT_MACHINE_NAME
+      #define DEFAULT_MACHINE_NAME "Ender-3 V3 SE"
+    #endif
 #endif
 #define BOARD_WEBSITE_URL      "www.creality.com"
 
@@ -100,7 +106,7 @@
 #define ONBOARD_SPI_DEVICE                     1  // SPI1
 #define ONBOARD_SD_CS_PIN                   PA4   // SDSS
 
-#if ANY(RET6_12864_LCD, HAS_DWIN_E3V2, IS_DWIN_MARLINUI)
+#if ANY(RET6_12864_LCD, HAS_DWIN_E3V2, IS_DWIN_MARLINUI, TJC_DISPLAY)
 
   /**
    *    LCD PIN OUT

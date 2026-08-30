@@ -573,7 +573,7 @@
   #endif
 
   // Extender cable doesn't support SD_DETECT_PIN
-  #if ENABLED(NO_SD_DETECT)
+  #if ENABLED(NO_SD_DETECT) && DISABLED(DWIN_LCD_PROUI)
     #undef SD_DETECT_PIN
   #endif
 
@@ -1467,9 +1467,9 @@
   #endif
 #endif
 
-//
-// Trinamic Stepper Drivers
-//
+/**
+ * Trinamic Stepper Drivers
+ */
 
 #if HAS_TRINAMIC_CONFIG
   #if ANY(STEALTHCHOP_E, STEALTHCHOP_XY, STEALTHCHOP_Z, STEALTHCHOP_I, STEALTHCHOP_J, STEALTHCHOP_K, STEALTHCHOP_U, STEALTHCHOP_V, STEALTHCHOP_W)
@@ -1891,9 +1891,9 @@
   #undef SENSORLESS_BACKOFF_MM
 #endif
 
-//
-// Set USING_HW_SERIALn flags for used Serial Ports
-//
+/**
+ * Set USING_HW_SERIALn flags for used Serial Ports
+ */
 
 // Flag the indexed hardware serial ports in use
 #define SERIAL_IN_USE(N) (   (defined(SERIAL_PORT)       && N == SERIAL_PORT) \
@@ -2020,7 +2020,7 @@
 /**
  * Endstop and probe flags
  * - Set USE_(AXIS)_(MIN|MAX) flags for each used endstop that has a pin, including those for DIAG0 state.
- *   - Note: Dual X Carriage uses "X" and "X2" steppers, but X_MIN and X_MAX endstop states (i.e., not X2_MAX).
+ * - NOTE: Dual X Carriage uses "X" and "X2" steppers, but X_MIN and X_MAX endstop states (i.e., not X2_MAX).
  * - Set a HAS_(AXIS)_(MIN|MAX)_STATE flag for each endstop that has a state, including SPI Sensorless which don't use a pin.
  * - Set a HAS_(AXIS)_STATE flag for each axis that has at least one state.
  * - Consider (AXIS)_SAFETY_STOP for the case where the axis has a second endstop.
@@ -2531,10 +2531,9 @@
 #undef NEED_HIT_STATE
 #undef PCAT
 
-//
-// ADC Temp Sensors (Thermistor or Thermocouple with amplifier ADC interface)
-//
-
+/**
+ * ADC Temp Sensors (Thermistor or Thermocouple with amplifier ADC interface)
+ */
 #if TEMP_SENSOR(0)
   #define HAS_TEMP_HOTEND 1
 #endif
@@ -2655,9 +2654,9 @@
   #endif
 #endif
 
-//
-// Heater Outputs
-//
+/**
+ * Heater Outputs
+ */
 #if PIN_EXISTS(HEATER_0)
   #define HAS_HEATER_0 1
 #endif
@@ -2690,7 +2689,9 @@
 #endif
 
 // Shorthand for common combinations
-#if HAS_HEATED_BED
+#if HAS_HEATED_BED  && PIN_EXISTS(HEATER_BED)
+  #define HAS_HEATED_BED 1
+
   #ifndef BED_OVERSHOOT
     #define BED_OVERSHOOT 10
   #endif
@@ -2713,7 +2714,7 @@
   #define HAS_TEMP_SENSOR 1
 #endif
 
-#if HAS_TEMP_CHAMBER && HAS_HEATER_CHAMBER
+#if HAS_TEMP_CHAMBER && PIN_EXISTS(HEATER_CHAMBER)
   #define HAS_HEATED_CHAMBER 1
   #ifndef CHAMBER_OVERSHOOT
     #define CHAMBER_OVERSHOOT 10
@@ -2726,6 +2727,10 @@
 // PID heating
 #if ANY(PIDTEMP, PIDTEMPBED, PIDTEMPCHAMBER)
   #define HAS_PID_HEATING 1
+#endif
+
+#if ANY(HAS_PID_HEATING, MPC_AUTOTUNE) && ENABLED(DWIN_LCD_PROUI) && DISABLED(DISABLE_TUNING_GRAPH)
+  #define PROUI_TUNING_GRAPH 1
 #endif
 
 // Thermal protection
@@ -3225,6 +3230,11 @@
 /**
  * Bed Probe dependencies
  */
+ 
+ #if ANY(BABYSTEPPING, PROBE_SELECTED)
+  #define HAS_ZOFFSET_ITEM 1
+#endif
+
 #if ANY(MESH_BED_LEVELING, HAS_BED_PROBE)
   #ifndef PROBE_OFFSET_ZMIN
     #define PROBE_OFFSET_ZMIN -20
@@ -3329,7 +3339,7 @@
  * Advanced Pause - Filament Change
  */
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
-  #if ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, DWIN_CREALITY_LCD_JYERSUI, SOVOL_SV06_RTS) || ALL(EMERGENCY_PARSER, HOST_PROMPT_SUPPORT)
+  #if ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, DWIN_LCD_PROUI, TJC_DISPLAY, DWIN_CREALITY_LCD_JYERSUI, SOVOL_SV06_RTS) || ALL(EMERGENCY_PARSER, HOST_PROMPT_SUPPORT)
     #define M600_PURGE_MORE_RESUMABLE 1  // UI provides some way to Purge More / Resume
   #endif
   #ifndef FILAMENT_CHANGE_SLOW_LOAD_LENGTH
@@ -3424,6 +3434,11 @@
     #define _MESH_MIN_Y (Y_MIN_BED + _MESH_INSET)
     #define _MESH_MAX_X (X_MAX_BED - _MESH_INSET)
     #define _MESH_MAX_Y (Y_MAX_BED - _MESH_INSET)
+  #elif ENABLED(DWIN_LCD_PROUI)
+    #define _MESH_MIN_X (_MESH_INSET)
+    #define _MESH_MIN_Y (_MESH_INSET)
+    #define _MESH_MAX_X ((X_BED_SIZE) - (_MESH_INSET))
+    #define _MESH_MAX_Y ((Y_BED_SIZE) - (_MESH_INSET))								 
   #else
     // Boundaries for Cartesian probing based on set limits
     #define _MESH_MIN_X (_MAX(X_MIN_BED + _MESH_INSET, X_MIN_POS)) // UBL is careful not to probe off the bed. It doesn't
@@ -3445,7 +3460,7 @@
   #ifndef MESH_MAX_Y
     #define MESH_MAX_Y _MESH_MAX_Y
   #endif
-#else
+#elif DISABLED(DWIN_LCD_PROUI)
   #undef MESH_MIN_X
   #undef MESH_MIN_Y
   #undef MESH_MAX_X
@@ -3504,7 +3519,7 @@
   #endif
 #endif
 
-#ifndef __SAM3X8E__ //todo: hal: broken hal encapsulation
+#ifndef __SAM3X8E__ ///todo: hal: broken hal encapsulation
   #undef UI_VOLTAGE_LEVEL
   #undef RADDS_DISPLAY
   #undef MOTOR_CURRENT
@@ -3586,12 +3601,12 @@
 #if defined(TARGET_LPC1768) && IS_RRD_FG_SC && (SD_SCK_PIN == LCD_PINS_D4)
   #define SDCARD_SORT_ALPHA         // Keep one directory level in RAM. Changing directory levels
                                     // may still glitch the screen, but LCD updates clean it up.
-  #if SDSORT_LIMIT > 64 || !SDSORT_USES_RAM || SDSORT_USES_STACK || !SDSORT_CACHE_NAMES
+  #if SDSORT_LIMIT > 75 || !SDSORT_USES_RAM || SDSORT_USES_STACK || !SDSORT_CACHE_NAMES
     #undef SDSORT_LIMIT
     #undef SDSORT_USES_RAM
     #undef SDSORT_USES_STACK
     #undef SDSORT_CACHE_NAMES
-    #define SDSORT_LIMIT       64
+    #define SDSORT_LIMIT       75
     #define SDSORT_USES_RAM    true
     #define SDSORT_USES_STACK  false
     #define SDSORT_CACHE_NAMES true
@@ -3653,6 +3668,10 @@
 #endif
 
 #if BUTTONS_EXIST(EN1, EN2, ENC)
+  #define HAS_ROTARY_ENCODER 1
+#endif
+
+#if ENABLED(TJC_DISPLAY)
   #define HAS_ROTARY_ENCODER 1
 #endif
 

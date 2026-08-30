@@ -34,3 +34,9 @@
     #include "../../Configuration_adv.h"
   #endif
 #endif
+
+/// EXPERIMENTAL:
+/**
+ *  #include "../../../configurations/_Undef_Configuration_adv.h"  // **EXPERIMENTAL** Uncomment to use
+ *  #include "../../../configurations/_Define_Configuration_adv.h" // **EXPERIMENTAL** Uncomment to use
+ */																									 

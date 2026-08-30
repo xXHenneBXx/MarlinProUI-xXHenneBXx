@@ -42,6 +42,10 @@
   #include "../extui/ui_api.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 void _man_probe_pt(const xy_pos_t &xy) {
   if (!ui.wait_for_move) {
     ui.wait_for_move = true;

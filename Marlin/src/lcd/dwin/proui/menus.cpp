@@ -29,7 +29,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
 
 #include "../common/encoder.h"
 #include "dwin.h"
@@ -73,6 +73,14 @@ void eraseMenuText(const int8_t line) {
 }
 
 void drawMenuLine(const uint8_t line, const uint8_t icon/*=0*/, const char * const label/*=nullptr*/, bool more/*=false*/, bool selected/*=false*/) {
+  // xXHenneBXx fix: clear the label/value area (same rect eraseMenuText uses) before
+  // drawing. DWINUI::drawString only paints glyph pixels (bShow=false), so without
+  // this, anything previously sitting in this rect - a longer label from the item
+  // that used to be on this row, or a leftover Chinese-cache paste - stayed visible
+  // around/behind the new text. Runs unconditionally so it's correct on every call
+  // path (full menu draw, single-item redraw, live value updates), not just when a
+  // caller happens to pass erase=true.
+  eraseMenuText(line);
   if (icon)  DWINUI::drawIcon(icon, ICOX, MBASE(line) - 3);
   if (label) DWINUI::drawString(LBLX, MBASE(line) - 1, (char*)label);
   if (more)  DWINUI::drawIcon(ICON_More, VALX + 16, MBASE(line) - 3);
@@ -104,6 +112,10 @@ void drawMenuIntValue(uint16_t bcolor, const uint8_t line, uint8_t iNum, const i
 }
 
 void onDrawMenuItem(MenuItem* menuitem, int8_t line) {
+  // xXHenneBXx fix: same class of fix as drawMenuLine() above - clear the label rect
+  // first so this is correct whether the frameid (Chinese frameAreaCopy) branch or
+  // the caption (English drawString) branch runs below.
+  eraseMenuText(line);
   if (menuitem->icon) DWINUI::drawIcon(menuitem->icon, ICOX, MBASE(line) - 3);
   if (menuitem->frameid)
     dwinFrameAreaCopy(menuitem->frameid, menuitem->frame.left, menuitem->frame.top, menuitem->frame.right, menuitem->frame.bottom, LBLX, MBASE(line));
@@ -556,4 +568,4 @@ void redrawItem() {
   static_cast<MenuItemPtr*>(currentMenu->selectedItem())->value;
 }
 
-#endif // DWIN_LCD_PROUI
+#endif // DWIN_LCD_PROUI && TJC_DISPLAY

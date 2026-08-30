@@ -29,7 +29,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
 
 #include "dwin.h"
 
@@ -42,13 +42,13 @@
 #include "dwin_popup.h"
 #include "base64.h"
 
-#if ENABLED(TJC_DISPLAY)
-  #define THUMBWIDTH  180
-  #define THUMBHEIGHT 180
-#else
-  #define THUMBWIDTH  200
-  #define THUMBHEIGHT 200
-#endif
+//#if ENABLED(TJC_DISPLAY)
+//  #define THUMBWIDTH  180
+//  #define THUMBHEIGHT 180
+//#else
+#define THUMBWIDTH  200
+#define THUMBHEIGHT 200
+//#endif
 
 fileprop_t fileprop;
 
@@ -227,4 +227,4 @@ void Preview::show() {
 }
 
 #endif // HAS_GCODE_PREVIEW
-#endif // DWIN_LCD_PROUI
+#endif // DWIN_LCD_PROUI && TJC_DISPLAY

@@ -33,6 +33,10 @@
   #include "../../lcd/extui/ui_api.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../../lcd/dwin/proui/dwin.h"
+#endif
+
 /**
  * M303: PID relay autotune
  *

@@ -30,7 +30,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ALL(DWIN_LCD_PROUI, HAS_MESH)
+#if HAS_MESH && (ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY))
 
 #include "../../marlinui.h"
 #include "../../../feature/bedlevel/bedlevel.h"
@@ -151,4 +151,4 @@ void gotoMeshViewer(const bool redraw) {
   else hmiReturnScreen();
 }
 
-#endif // DWIN_LCD_PROUI && HAS_MESH
+#endif // DWIN_LCD_PROUI || TJC_DISPLAY && HAS_MESH

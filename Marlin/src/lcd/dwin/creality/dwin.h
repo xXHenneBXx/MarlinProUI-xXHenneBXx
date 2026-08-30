@@ -28,8 +28,8 @@
 #include "dwin_lcd.h"
 #include "../common/encoder.h"
 #include "../common/limits.h"
+#include "../common/dwin_api.h"
 #include "../../../libs/BL24CXX.h"
-
 #include "../../../inc/MarlinConfigPre.h"
 
 enum processID : uint8_t {

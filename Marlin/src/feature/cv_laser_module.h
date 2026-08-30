@@ -33,8 +33,8 @@
 
 #include "../inc/MarlinConfig.h"
 
-#if ENABLED(CV_LASER_MODULE) && DISABLED(PROUI_EX)
-  #error "CV_LASER_MODULE requires PROUI_EX."
+#if ENABLED(CV_LASER_MODULE) && DISABLED(DWIN_LCD_PROUI)
+  #error "CV_LASER_MODULE requires DWIN_LCD_PROUI (PROUI)."
 #endif
 
 #if HAS_MEDIA

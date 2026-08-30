@@ -27,7 +27,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if HAS_DWIN_E3V2
+#if ANY(HAS_DWIN_E3V2, DWIN_LCD_PROUI, TJC_DISPLAY)
 
 #include "encoder.h"
 #include "../../buttons.h"

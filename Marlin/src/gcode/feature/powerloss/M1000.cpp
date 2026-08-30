@@ -33,7 +33,9 @@
 #endif
 
 #include "../../../lcd/marlinui.h"
-#if ENABLED(EXTENSIBLE_UI)
+#if ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
+  #include "../../../lcd/dwin/proui/dwin.h"
+#elif ENABLED(EXTENSIBLE_UI)
   #include "../../../lcd/extui/ui_api.h"
 #elif ENABLED(DWIN_CREALITY_LCD)
   #include "../../../lcd/dwin/creality/dwin.h"

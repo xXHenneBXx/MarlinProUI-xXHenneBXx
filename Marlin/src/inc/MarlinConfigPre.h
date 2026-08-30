@@ -52,7 +52,7 @@
   #include HAL_PATH(.., inc/Conditionals_adv.h)
 #endif
 
-// ProUI
-//#if PROUI_EX
-//  #include "../lcd/dwin/proui/proui_ex.h"
-//#endif
+// DWIN general ProUI defines and data structs
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin_defines.h"
+#endif

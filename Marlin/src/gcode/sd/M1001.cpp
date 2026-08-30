@@ -50,6 +50,10 @@
   #include "../../lcd/extui/ui_api.h"
 #endif
 
+#if ENABLED(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../../lcd/dwin/proui/dwin.h"
+#endif
+
 #if ENABLED(HOST_ACTION_COMMANDS)
   #include "../../feature/host_actions.h"
 #endif

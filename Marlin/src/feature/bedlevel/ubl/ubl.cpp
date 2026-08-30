@@ -35,9 +35,13 @@ unified_bed_leveling bedlevel;
 #include "../../../module/motion.h"
 #include "../../../module/probe.h"
 #include "../../../module/temperature.h"
-
+#include "../../../lcd/dwin/proui/dwin.h"
 #if ENABLED(EXTENSIBLE_UI)
   #include "../../../lcd/extui/ui_api.h"
+#endif
+
+#if ENABLED(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../../../lcd/dwin/proui/dwin.h"
 #endif
 
 #include "math.h"

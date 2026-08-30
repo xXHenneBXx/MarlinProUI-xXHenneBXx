@@ -30,13 +30,13 @@
 #define _FORCE_INLINE_ __attribute__((__always_inline__)) __inline__
 #define  FORCE_INLINE  __attribute__((always_inline)) inline
 #define NO_INLINE      __attribute__((noinline))
-#define _UNUSED      __attribute__((unused))
-#define __O0         __attribute__((optimize("O0")))  // No optimization and less debug info
-#define __Og         __attribute__((optimize("Og")))  // Optimize the debugging experience
-#define __Os         __attribute__((optimize("Os")))  // Optimize for size
-#define __O1         __attribute__((optimize("O1")))  // Try to reduce size and cycles; nothing that takes a lot of time to compile
-#define __O2         __attribute__((optimize("O2")))  // Optimize even more
-#define __O3         __attribute__((optimize("O3")))  // Optimize yet more
+#define _UNUSED        __attribute__((unused))
+#define __O0           __attribute__((optimize("O0"))) // No optimization and less debug info
+#define __Og           __attribute__((optimize("Og"))) // Optimize the debugging experience
+#define __Os           __attribute__((optimize("Os"))) // Optimize for size
+#define __O1           __attribute__((optimize("O1"))) // Try to reduce size and cycles; nothing that takes a lot of time to compile
+#define __O2           __attribute__((optimize("O2"))) // Optimize even more
+#define __O3           __attribute__((optimize("O3"))) // Optimize yet more
 
 #define IS_CONSTEXPR(...) __builtin_constant_p(__VA_ARGS__) // Only valid solution with C++14. Should use std::is_constant_evaluated() in C++20 instead
 
@@ -60,14 +60,14 @@
 // Macros for bit masks
 #undef _BV
 #define _BV(b) (1 << (b))
-#define TEST(n,b) (!!((n)&_BV(b)))
-#define SET_BIT_TO(N,B,TF) do{ if (TF) SBI(N,B); else CBI(N,B); }while(0)
 #ifndef SBI
   #define SBI(A,B) (A |= _BV(B))
 #endif
 #ifndef CBI
   #define CBI(A,B) (A &= ~_BV(B))
 #endif
+#define TEST(n,b) (!!((n)&_BV(b)))
+#define SET_BIT_TO(N,B,TF) do{ if (TF) SBI(N,B); else CBI(N,B); }while(0)
 #define TBI(N,B) (N ^= _BV(B))
 #define _BV32(b) (1UL << (b))
 #define TEST32(n,b) !!((n)&_BV32(b))
@@ -130,54 +130,99 @@
 
 #endif
 
+// Use NUM_ARGS(__VA_ARGS__) to get the number of variadic arguments
+#define _NUM_ARGS(_,n,m,l,k,j,i,h,g,f,e,d,c,b,a,Z,Y,X,W,V,U,T,S,R,Q,P,O,N,M,L,K,J,I,H,G,F,E,D,C,B,A,OUT,...) OUT
+#define NUM_ARGS(...) _NUM_ARGS(0,__VA_ARGS__,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0)
+
+// Use TWO_ARGS(__VA_ARGS__) to get whether there are 1, 2, or >2 arguments
+#define _TWO_ARGS(_,n,m,l,k,j,i,h,g,f,e,d,c,b,a,Z,Y,X,W,V,U,T,S,R,Q,P,O,N,M,L,K,J,I,H,G,F,E,D,C,B,A,OUT,...) OUT
+#define TWO_ARGS(...) _TWO_ARGS(0,__VA_ARGS__,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,0)
+
 // Macros to chain up to 40 conditions
-#define _DO_1(W,C,A)       (_##W##_1(A))
-#define _DO_2(W,C,A,B)     (_##W##_1(A) C _##W##_1(B))
-#define _DO_3(W,C,A,V...)  (_##W##_1(A) C _DO_2(W,C,V))
-#define _DO_4(W,C,A,V...)  (_##W##_1(A) C _DO_3(W,C,V))
-#define _DO_5(W,C,A,V...)  (_##W##_1(A) C _DO_4(W,C,V))
-#define _DO_6(W,C,A,V...)  (_##W##_1(A) C _DO_5(W,C,V))
-#define _DO_7(W,C,A,V...)  (_##W##_1(A) C _DO_6(W,C,V))
-#define _DO_8(W,C,A,V...)  (_##W##_1(A) C _DO_7(W,C,V))
-#define _DO_9(W,C,A,V...)  (_##W##_1(A) C _DO_8(W,C,V))
-#define _DO_10(W,C,A,V...) (_##W##_1(A) C _DO_9(W,C,V))
-#define _DO_11(W,C,A,V...) (_##W##_1(A) C _DO_10(W,C,V))
-#define _DO_12(W,C,A,V...) (_##W##_1(A) C _DO_11(W,C,V))
-#define _DO_13(W,C,A,V...) (_##W##_1(A) C _DO_12(W,C,V))
-#define _DO_14(W,C,A,V...) (_##W##_1(A) C _DO_13(W,C,V))
-#define _DO_15(W,C,A,V...) (_##W##_1(A) C _DO_14(W,C,V))
-#define _DO_16(W,C,A,V...) (_##W##_1(A) C _DO_15(W,C,V))
-#define _DO_17(W,C,A,V...) (_##W##_1(A) C _DO_16(W,C,V))
-#define _DO_18(W,C,A,V...) (_##W##_1(A) C _DO_17(W,C,V))
-#define _DO_19(W,C,A,V...) (_##W##_1(A) C _DO_18(W,C,V))
-#define _DO_20(W,C,A,V...) (_##W##_1(A) C _DO_19(W,C,V))
-#define _DO_21(W,C,A,V...) (_##W##_1(A) C _DO_20(W,C,V))
-#define _DO_22(W,C,A,V...) (_##W##_1(A) C _DO_21(W,C,V))
-#define _DO_23(W,C,A,V...) (_##W##_1(A) C _DO_22(W,C,V))
-#define _DO_24(W,C,A,V...) (_##W##_1(A) C _DO_23(W,C,V))
-#define _DO_25(W,C,A,V...) (_##W##_1(A) C _DO_24(W,C,V))
-#define _DO_26(W,C,A,V...) (_##W##_1(A) C _DO_25(W,C,V))
-#define _DO_27(W,C,A,V...) (_##W##_1(A) C _DO_26(W,C,V))
-#define _DO_28(W,C,A,V...) (_##W##_1(A) C _DO_27(W,C,V))
-#define _DO_29(W,C,A,V...) (_##W##_1(A) C _DO_28(W,C,V))
-#define _DO_30(W,C,A,V...) (_##W##_1(A) C _DO_29(W,C,V))
-#define _DO_31(W,C,A,V...) (_##W##_1(A) C _DO_30(W,C,V))
-#define _DO_32(W,C,A,V...) (_##W##_1(A) C _DO_31(W,C,V))
-#define _DO_33(W,C,A,V...) (_##W##_1(A) C _DO_32(W,C,V))
-#define _DO_34(W,C,A,V...) (_##W##_1(A) C _DO_33(W,C,V))
-#define _DO_35(W,C,A,V...) (_##W##_1(A) C _DO_34(W,C,V))
-#define _DO_36(W,C,A,V...) (_##W##_1(A) C _DO_35(W,C,V))
-#define _DO_37(W,C,A,V...) (_##W##_1(A) C _DO_36(W,C,V))
-#define _DO_38(W,C,A,V...) (_##W##_1(A) C _DO_37(W,C,V))
-#define _DO_39(W,C,A,V...) (_##W##_1(A) C _DO_38(W,C,V))
-#define _DO_40(W,C,A,V...) (_##W##_1(A) C _DO_39(W,C,V))
-#define __DO_N(W,C,N,V...) _DO_##N(W,C,V)
-#define _DO_N(W,C,N,V...)  __DO_N(W,C,N,V)
-#define DO(W,C,V...)       (_DO_N(W,C,NUM_ARGS(V),V))
+#define _DO_1( W,C,A)     (_##W##_1(A))
+#define _DO_2( W,C,A,B)   (_##W##_1(A) C _##W##_1(B))
+#define _DO_3( W,C,A,...) (_##W##_1(A) C _DO_2( W,C,__VA_ARGS__))
+#define _DO_4( W,C,A,...) (_##W##_1(A) C _DO_3( W,C,__VA_ARGS__))
+#define _DO_5( W,C,A,...) (_##W##_1(A) C _DO_4( W,C,__VA_ARGS__))
+#define _DO_6( W,C,A,...) (_##W##_1(A) C _DO_5( W,C,__VA_ARGS__))
+#define _DO_7( W,C,A,...) (_##W##_1(A) C _DO_6( W,C,__VA_ARGS__))
+#define _DO_8( W,C,A,...) (_##W##_1(A) C _DO_7( W,C,__VA_ARGS__))
+#define _DO_9( W,C,A,...) (_##W##_1(A) C _DO_8( W,C,__VA_ARGS__))
+#define _DO_10(W,C,A,...) (_##W##_1(A) C _DO_9( W,C,__VA_ARGS__))
+#define _DO_11(W,C,A,...) (_##W##_1(A) C _DO_10(W,C,__VA_ARGS__))
+#define _DO_12(W,C,A,...) (_##W##_1(A) C _DO_11(W,C,__VA_ARGS__))
+#define _DO_13(W,C,A,...) (_##W##_1(A) C _DO_12(W,C,__VA_ARGS__))
+#define _DO_14(W,C,A,...) (_##W##_1(A) C _DO_13(W,C,__VA_ARGS__))
+#define _DO_15(W,C,A,...) (_##W##_1(A) C _DO_14(W,C,__VA_ARGS__))
+#define _DO_16(W,C,A,...) (_##W##_1(A) C _DO_15(W,C,__VA_ARGS__))
+#define _DO_17(W,C,A,...) (_##W##_1(A) C _DO_16(W,C,__VA_ARGS__))
+#define _DO_18(W,C,A,...) (_##W##_1(A) C _DO_17(W,C,__VA_ARGS__))
+#define _DO_19(W,C,A,...) (_##W##_1(A) C _DO_18(W,C,__VA_ARGS__))
+#define _DO_20(W,C,A,...) (_##W##_1(A) C _DO_19(W,C,__VA_ARGS__))
+#define _DO_21(W,C,A,...) (_##W##_1(A) C _DO_20(W,C,__VA_ARGS__))
+#define _DO_22(W,C,A,...) (_##W##_1(A) C _DO_21(W,C,__VA_ARGS__))
+#define _DO_23(W,C,A,...) (_##W##_1(A) C _DO_22(W,C,__VA_ARGS__))
+#define _DO_24(W,C,A,...) (_##W##_1(A) C _DO_23(W,C,__VA_ARGS__))
+#define _DO_25(W,C,A,...) (_##W##_1(A) C _DO_24(W,C,__VA_ARGS__))
+#define _DO_26(W,C,A,...) (_##W##_1(A) C _DO_25(W,C,__VA_ARGS__))
+#define _DO_27(W,C,A,...) (_##W##_1(A) C _DO_26(W,C,__VA_ARGS__))
+#define _DO_28(W,C,A,...) (_##W##_1(A) C _DO_27(W,C,__VA_ARGS__))
+#define _DO_29(W,C,A,...) (_##W##_1(A) C _DO_28(W,C,__VA_ARGS__))
+#define _DO_30(W,C,A,...) (_##W##_1(A) C _DO_29(W,C,__VA_ARGS__))
+#define _DO_31(W,C,A,...) (_##W##_1(A) C _DO_30(W,C,__VA_ARGS__))
+#define _DO_32(W,C,A,...) (_##W##_1(A) C _DO_31(W,C,__VA_ARGS__))
+#define _DO_33(W,C,A,...) (_##W##_1(A) C _DO_32(W,C,__VA_ARGS__))
+#define _DO_34(W,C,A,...) (_##W##_1(A) C _DO_33(W,C,__VA_ARGS__))
+#define _DO_35(W,C,A,...) (_##W##_1(A) C _DO_34(W,C,__VA_ARGS__))
+#define _DO_36(W,C,A,...) (_##W##_1(A) C _DO_35(W,C,__VA_ARGS__))
+#define _DO_37(W,C,A,...) (_##W##_1(A) C _DO_36(W,C,__VA_ARGS__))
+#define _DO_38(W,C,A,...) (_##W##_1(A) C _DO_37(W,C,__VA_ARGS__))
+#define _DO_39(W,C,A,...) (_##W##_1(A) C _DO_38(W,C,__VA_ARGS__))
+#define _DO_40(W,C,A,...) (_##W##_1(A) C _DO_39(W,C,__VA_ARGS__))
+#define __DO_N(W,C,N,...)  _DO_##N(W,C,__VA_ARGS__)
+#define  _DO_N(W,C,N,...) __DO_N(W,C,N,__VA_ARGS__)
+#define   DO(W,C,...)     (_DO_N(W,C,NUM_ARGS(__VA_ARGS__),__VA_ARGS__))
 
 // Concatenate symbol names, without or with pre-expansion
 #define _CAT(a,V...) a##V
-#define CAT(a,V...) _CAT(a,V)
+#define CAT( a,V...) _CAT(a,V)
+
+//
+// Primitives supporting precompiler REPEAT
+//
+#define FIRST( a,...)     a
+#define SECOND(a,b,...)   b
+#define THIRD( a,b,c,...) c
+
+#define IS_PROBE(V...) SECOND(V, 0)     // Get the second item passed, or 0
+#define PROBE() ~, 1                    // Second item will be 1 if this is passed
+#define _NOT_0 PROBE()
+#define NOT(x) IS_PROBE(_CAT(_NOT_, x)) //   NOT('0') gets '1'. Anything else gets '0'.
+#define _BOOL(x) NOT(NOT(x))            // _BOOL('0') gets '0'. Anything else gets '1'.
+
+#define _IF_ELSE(TF) _CAT(_IF_, TF)
+#define IF_ELSE(TF) _IF_ELSE(_BOOL(TF))
+
+#define EMIT(V...) V
+#define OMIT(...)
+
+#define _IF_1(V...) V OMIT
+#define _IF_0(...)    EMIT
+
+#define _END_OF_ARGUMENTS_() 0
+#define HAS_ARGS(V...) _BOOL(FIRST(_END_OF_ARGUMENTS_ V)())
+
+// Simple Inline IF Macros, friendly to use in other macro definitions
+#define IF(O, A, B) ((O) ? (A) : (B))
+#define IF_0(O, A) IF(O, A, 0)
+#define IF_1(O, A) IF(O, A, 1)
+
+// Defer expansion
+#define EMPTY()
+#define DEFER( M) M EMPTY()
+#define DEFER2(M) M EMPTY EMPTY()()
+#define DEFER3(M) M EMPTY EMPTY EMPTY()()()
+#define DEFER4(M) M EMPTY EMPTY EMPTY EMPTY()()()()
 
 // Recognize "true" values: blank, 1, 0x1, true
 #define _ISENA_     ~,1
@@ -198,29 +243,27 @@
 #define MANY(V...)          (COUNT_ENABLED(V) > 1)
 
 // Ternary pre-compiler macros conceal non-emitted content from the compiler
-#define TERN(O,A,B)         _TERN(_ENA_1(O),B,A)    // OPTION ? 'A' : 'B'
+#define ___TERN(P,V...)     THIRD(P,V)              // If first argument has a comma, A. Else B.
+#define __TERN(T,V...)      ___TERN(_CAT(_NO,T),V)  // Prepend '_NO' to get '_NOT_0' or '_NOT_1'
+#define _TERN(E,V...)       __TERN(_CAT(T_,E),V)    // Prepend 'T_' to get 'T_0' or 'T_1'
+#define TERN( O,A,B)        _TERN(_ENA_1(O),B,A)    // OPTION ? 'A' : 'B'
 #define TERN0(O,A)          _TERN(_ENA_1(O),0,A)    // OPTION ? 'A' : '0'
 #define TERN1(O,A)          _TERN(_ENA_1(O),1,A)    // OPTION ? 'A' : '1'
-#define _TERN(E,V...)       __TERN(_CAT(T_,E),V)    // Prepend 'T_' to get 'T_0' or 'T_1'
-#define __TERN(T,V...)      ___TERN(_CAT(_NO,T),V)  // Prepend '_NO' to get '_NOT_0' or '_NOT_1'
-#define ___TERN(P,V...)     THIRD(P,V)              // If first argument has a comma, A. Else B.
 #define IF_DISABLED(O,A)    TERN(O,,A)
-
-// "Ternary" that emits or omits the given content
-#define EMIT(V...) V
-#define OMIT(...)
-#define TERN_(O,A)          TERF(O,EMIT)(A)         // OPTION ? 'A' : '<nul>'   ; Usage: TERN_(OPTION, EMITTHIS)
 
 // Call G(...) or swallow with OMIT(...)
 #define TERF(O,G)           _TERN(_ENA_1(O),OMIT,G) // OPTION ? 'G' : 'OMIT'    ; Usage: TERF(OPTION, CALLTHIS)(ARGS...)
 
+// "Ternary" that emits or omits the given content
+#define TERN_(O,A)          TERF(O,EMIT)(A)         // OPTION ? 'A' : '<nul>'   ; Usage: TERN_(OPTION, EMITTHIS)
+
 // Macros to conditionally emit array items and function arguments
-#define _OPTITEM(A...)      A,
-#define OPTITEM(O,A...)     TERN_(O,DEFER(_OPTITEM)(A))
-#define _OPTARG(A...)       , A
-#define OPTARG(O,A...)      TERN_(O,DEFER(_OPTARG)(A))
+#define _OPTARG( A...)      , A
 #define _OPTCODE(A)         A;
-#define OPTCODE(O,A)        TERN_(O,DEFER(_OPTCODE)(A))
+#define _OPTITEM(A...)      A,
+#define OPTARG( O,A...)     TERN_(O,DEFER(_OPTARG)(A))  // , A
+#define OPTCODE(O,A)        TERN_(O,DEFER(_OPTCODE)(A)) // A;
+#define OPTITEM(O,A...)     TERN_(O,DEFER(_OPTITEM)(A)) // A,
 
 // Macros to avoid operations that aren't always optimized away (e.g., 'f + 0.0' and 'f * 1.0').
 // Compiler flags -fno-signed-zeros -ffinite-math-only also cover 'f * 1.0', 'f - f', etc.
@@ -263,13 +306,13 @@
   }while(0)
 
 // Expansion of some code
-#define CODE_16( A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,...) A; B; C; D; E; F; G; H; I; J; K; L; M; N; O; P
-#define CODE_15( A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,...) A; B; C; D; E; F; G; H; I; J; K; L; M; N; O
-#define CODE_14( A,B,C,D,E,F,G,H,I,J,K,L,M,N,...) A; B; C; D; E; F; G; H; I; J; K; L; M; N
-#define CODE_13( A,B,C,D,E,F,G,H,I,J,K,L,M,...) A; B; C; D; E; F; G; H; I; J; K; L; M
-#define CODE_12( A,B,C,D,E,F,G,H,I,J,K,L,...) A; B; C; D; E; F; G; H; I; J; K; L
-#define CODE_11( A,B,C,D,E,F,G,H,I,J,K,...) A; B; C; D; E; F; G; H; I; J; K
-#define CODE_10( A,B,C,D,E,F,G,H,I,J,...) A; B; C; D; E; F; G; H; I; J
+#define CODE_16(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,...) A; B; C; D; E; F; G; H; I; J; K; L; M; N; O; P
+#define CODE_15(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,...) A; B; C; D; E; F; G; H; I; J; K; L; M; N; O
+#define CODE_14(A,B,C,D,E,F,G,H,I,J,K,L,M,N,...) A; B; C; D; E; F; G; H; I; J; K; L; M; N
+#define CODE_13(A,B,C,D,E,F,G,H,I,J,K,L,M,...) A; B; C; D; E; F; G; H; I; J; K; L; M
+#define CODE_12(A,B,C,D,E,F,G,H,I,J,K,L,...) A; B; C; D; E; F; G; H; I; J; K; L
+#define CODE_11(A,B,C,D,E,F,G,H,I,J,K,...) A; B; C; D; E; F; G; H; I; J; K
+#define CODE_10(A,B,C,D,E,F,G,H,I,J,...) A; B; C; D; E; F; G; H; I; J
 #define CODE_9( A,B,C,D,E,F,G,H,I,...) A; B; C; D; E; F; G; H; I
 #define CODE_8( A,B,C,D,E,F,G,H,...) A; B; C; D; E; F; G; H
 #define CODE_7( A,B,C,D,E,F,G,...) A; B; C; D; E; F; G
@@ -280,8 +323,8 @@
 #define CODE_2( A,B,...) A; B
 #define CODE_1( A,...) A
 #define CODE_0(...)
-#define _CODE_N(N,V...) CODE_##N(V)
-#define CODE_N(N,V...) _CODE_N(N,V)
+#define _CODE_N(N,V...)  CODE_##N(V)
+#define CODE_N( N,V...) _CODE_N(N,V)
 
 // Expansion of some non-delimited content
 #define GANG_16(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,...) A B C D E F G H I J K L M N O P
@@ -301,16 +344,16 @@
 #define GANG_2( A,B,...) A B
 #define GANG_1( A,...) A
 #define GANG_0(...)
-#define _GANG_N(N,V...) GANG_##N(V)
-#define GANG_N(N,V...) _GANG_N(N,V)
-#define GANG_N_1(N,K) _GANG_N(N,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K)
+#define _GANG_N(N,V...)  GANG_##N(V)
+#define GANG_N( N,V...) _GANG_N(N,V)
+#define GANG_N_1(N,K)   _GANG_N(N,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K)
 
 // Expansion of some list items
 #define LIST_32(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,DD,EE,FF,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,DD,EE,FF
 #define LIST_31(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,DD,EE,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,DD,EE
 #define LIST_30(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,DD,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,DD
 #define LIST_29(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC
-#define LIST_28(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,TU,V,W,X,Y,Z,AA,BB
+#define LIST_28(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB
 #define LIST_27(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA
 #define LIST_26(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
 #define LIST_25(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y
@@ -340,14 +383,14 @@
 #define LIST_1( A,...) A
 #define LIST_0(...)
 
-#define _LIST_N(N,V...) LIST_##N(V)
-#define LIST_N(N,V...) _LIST_N(N,V)
-#define LIST_N_1(N,K) _LIST_N(N,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K)
+#define _LIST_N(N,V...)  LIST_##N(V)
+#define LIST_N( N,V...) _LIST_N(N,V)
+#define LIST_N_1(N,K)   _LIST_N(N,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K)
 #define ARRAY_N(N,V...) { _LIST_N(N,V) }
 #define ARRAY_N_1(N,K)  { LIST_N_1(N,K) }
 
-#define _JOIN_1(O)         (O)
-#define JOIN_N(N,C,V...)   (DO(JOIN,C,LIST_N(N,V)))
+#define _JOIN_1(O)       (O)
+#define JOIN_N(N,C,V...) (DO(JOIN,C,LIST_N(N,V)))
 
 #define NOOP (void(0))
 
@@ -381,14 +424,6 @@
 #define LROUND(x)   lroundf(x)
 #define FMOD(x, y)  fmodf(x, y)
 #define HYPOT(x,y)  SQRT(HYPOT2(x,y))
-
-// Use NUM_ARGS(__VA_ARGS__) to get the number of variadic arguments
-#define _NUM_ARGS(_,n,m,l,k,j,i,h,g,f,e,d,c,b,a,Z,Y,X,W,V,U,T,S,R,Q,P,O,N,M,L,K,J,I,H,G,F,E,D,C,B,A,OUT,...) OUT
-#define NUM_ARGS(V...) _NUM_ARGS(0,V,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0)
-
-// Use TWO_ARGS(__VA_ARGS__) to get whether there are 1, 2, or >2 arguments
-#define _TWO_ARGS(_,n,m,l,k,j,i,h,g,f,e,d,c,b,a,Z,Y,X,W,V,U,T,S,R,Q,P,O,N,M,L,K,J,I,H,G,F,E,D,C,B,A,OUT,...) OUT
-#define TWO_ARGS(V...) _TWO_ARGS(0,V,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,0)
 
 #ifdef __cplusplus
 
@@ -444,17 +479,17 @@
     template<typename T> struct remove_cv { typedef typename remove_const<typename remove_volatile<T>::type>::type type; };
 
     // test if type is integral
-    template<typename>  struct _is_integral { enum { value = false }; };
-    template<>          struct _is_integral<unsigned char> { enum { value = true }; };
-    template<>          struct _is_integral<unsigned short> { enum { value = true }; };
-    template<>          struct _is_integral<unsigned int> { enum { value = true }; };
-    template<>          struct _is_integral<unsigned long> { enum { value = true }; };
-    template<>          struct _is_integral<unsigned long long> { enum { value = true }; };
-    template<>          struct _is_integral<char> { enum { value = true }; };
-    template<>          struct _is_integral<short> { enum { value = true }; };
-    template<>          struct _is_integral<int> { enum { value = true }; };
-    template<>          struct _is_integral<long> { enum { value = true }; };
-    template<>          struct _is_integral<long long> { enum { value = true }; };
+    template<typename>   struct _is_integral                     { enum { value = false }; };
+    template<>           struct _is_integral<unsigned char>      { enum { value = true }; };
+    template<>           struct _is_integral<unsigned short>     { enum { value = true }; };
+    template<>           struct _is_integral<unsigned int>       { enum { value = true }; };
+    template<>           struct _is_integral<unsigned long>      { enum { value = true }; };
+    template<>           struct _is_integral<unsigned long long> { enum { value = true }; };
+    template<>           struct _is_integral<char>               { enum { value = true }; };
+    template<>           struct _is_integral<short>              { enum { value = true }; };
+    template<>           struct _is_integral<int>                { enum { value = true }; };
+    template<>           struct _is_integral<long>               { enum { value = true }; };
+    template<>           struct _is_integral<long long>          { enum { value = true }; };
     template<typename T> struct is_integral : public _is_integral<typename remove_cv<T>::type> {};
   }
 
@@ -537,15 +572,15 @@
 #else
 
   #define __MIN_N(N,V...) MIN_##N(V)
-  #define _MIN_N(N,V...)  __MIN_N(N,V)
-  #define _MIN_N_REF()    _MIN_N
+  #define _MIN_N( N,V...) __MIN_N(N,V)
+  #define _MIN_N_REF()     _MIN_N
   #define _MIN(V...)      EVAL(_MIN_N(TWO_ARGS(V),V))
   #define MIN_2(a,b)      ((a)<(b)?(a):(b))
   #define MIN_3(a,V...)   MIN_2(a,DEFER2(_MIN_N_REF)()(TWO_ARGS(V),V))
 
   #define __MAX_N(N,V...) MAX_##N(V)
-  #define _MAX_N(N,V...)  __MAX_N(N,V)
-  #define _MAX_N_REF()    _MAX_N
+  #define _MAX_N( N,V...) __MAX_N(N,V)
+  #define _MAX_N_REF()     _MAX_N
   #define _MAX(V...)      EVAL(_MAX_N(TWO_ARGS(V),V))
   #define MAX_2(a,b)      ((a)>(b)?(a):(b))
   #define MAX_3(a,V...)   MAX_2(a,DEFER2(_MAX_N_REF)()(TWO_ARGS(V),V))
@@ -589,22 +624,22 @@
 #define INC_30 31
 #define INC_31 32
 #define INCREMENT_(n) INC_##n
-#define INCREMENT(n) INCREMENT_(n)
+#define INCREMENT( n) INCREMENT_(n)
 
-#define ADD0(N)  N
-#define ADD1(N)  INCREMENT_(N)
-#define ADD2(N)  ADD1(ADD1(N))
-#define ADD3(N)  ADD1(ADD2(N))
-#define ADD4(N)  ADD2(ADD2(N))
-#define ADD5(N)  ADD2(ADD3(N))
-#define ADD6(N)  ADD3(ADD3(N))
-#define ADD7(N)  ADD3(ADD4(N))
-#define ADD8(N)  ADD4(ADD4(N))
-#define ADD9(N)  ADD4(ADD5(N))
+#define ADD0( N) N
+#define ADD1( N) INCREMENT_(N)
+#define ADD2( N) ADD1(ADD1(N))
+#define ADD3( N) ADD1(ADD2(N))
+#define ADD4( N) ADD2(ADD2(N))
+#define ADD5( N) ADD2(ADD3(N))
+#define ADD6( N) ADD3(ADD3(N))
+#define ADD7( N) ADD3(ADD4(N))
+#define ADD8( N) ADD4(ADD4(N))
+#define ADD9( N) ADD4(ADD5(N))
 #define ADD10(N) ADD5(ADD5(N))
 #define SUM(A,B) _CAT(ADD,A)(B)
 #define DOUBLE_(n) ADD##n(n)
-#define DOUBLE(n) DOUBLE_(n)
+#define DOUBLE( n) DOUBLE_(n)
 
 // Macros for subtracting
 #define DEC_0   0
@@ -641,69 +676,36 @@
 #define DEC_31 30
 #define DEC_32 31
 #define DECREMENT_(n) DEC_##n
-#define DECREMENT(n) DECREMENT_(n)
+#define DECREMENT( n) DECREMENT_(n)
 
-#define SUB0(N)  N
-#define SUB1(N)  DECREMENT_(N)
-#define SUB2(N)  SUB1(SUB1(N))
-#define SUB3(N)  SUB1(SUB2(N))
-#define SUB4(N)  SUB2(SUB2(N))
-#define SUB5(N)  SUB2(SUB3(N))
-#define SUB6(N)  SUB3(SUB3(N))
-#define SUB7(N)  SUB3(SUB4(N))
-#define SUB8(N)  SUB4(SUB4(N))
-#define SUB9(N)  SUB4(SUB5(N))
+#define SUB0( N) N
+#define SUB1( N) DECREMENT_(N)
+#define SUB2( N) SUB1(SUB1(N))
+#define SUB3( N) SUB1(SUB2(N))
+#define SUB4( N) SUB2(SUB2(N))
+#define SUB5( N) SUB2(SUB3(N))
+#define SUB6( N) SUB3(SUB3(N))
+#define SUB7( N) SUB3(SUB4(N))
+#define SUB8( N) SUB4(SUB4(N))
+#define SUB9( N) SUB4(SUB5(N))
 #define SUB10(N) SUB5(SUB5(N))
-
-//
-// Primitives supporting precompiler REPEAT
-//
-#define FIRST(a,...)     a
-#define SECOND(a,b,...)  b
-#define THIRD(a,b,c,...) c
-
-// Defer expansion
-#define EMPTY()
-#define DEFER(M)  M EMPTY()
-#define DEFER2(M) M EMPTY EMPTY()()
-#define DEFER3(M) M EMPTY EMPTY EMPTY()()()
-#define DEFER4(M) M EMPTY EMPTY EMPTY EMPTY()()()()
+#define DIFF(A,B) _CAT(SUB,A)(B)
 
 // Force define expansion
-#define EVAL(V...)     EVAL16(V)
-#define EVAL4096(V...) EVAL2048(EVAL2048(V))
-#define EVAL2048(V...) EVAL1024(EVAL1024(V))
-#define EVAL1024(V...) EVAL512(EVAL512(V))
-#define EVAL512(V...)  EVAL256(EVAL256(V))
-#define EVAL256(V...)  EVAL128(EVAL128(V))
-#define EVAL128(V...)  EVAL64(EVAL64(V))
-#define EVAL64(V...)   EVAL32(EVAL32(V))
-#define EVAL32(V...)   EVAL16(EVAL16(V))
-#define EVAL16(V...)   EVAL8(EVAL8(V))
-#define EVAL8(V...)    EVAL4(EVAL4(V))
-#define EVAL4(V...)    EVAL2(EVAL2(V))
-#define EVAL2(V...)    EVAL1(EVAL1(V))
 #define EVAL1(V...)    V
-
-#define IS_PROBE(V...) SECOND(V, 0)     // Get the second item passed, or 0
-#define PROBE() ~, 1                    // Second item will be 1 if this is passed
-#define _NOT_0 PROBE()
-#define NOT(x) IS_PROBE(_CAT(_NOT_, x)) //   NOT('0') gets '1'. Anything else gets '0'.
-#define _BOOL(x) NOT(NOT(x))            // _BOOL('0') gets '0'. Anything else gets '1'.
-
-#define IF_ELSE(TF) _IF_ELSE(_BOOL(TF))
-#define _IF_ELSE(TF) _CAT(_IF_, TF)
-
-#define _IF_1(V...) V OMIT
-#define _IF_0(...)    EMIT
-
-#define HAS_ARGS(V...) _BOOL(FIRST(_END_OF_ARGUMENTS_ V)())
-#define _END_OF_ARGUMENTS_() 0
-
-// Simple Inline IF Macros, friendly to use in other macro definitions
-#define IF(O, A, B) ((O) ? (A) : (B))
-#define IF_0(O, A) IF(O, A, 0)
-#define IF_1(O, A) IF(O, A, 1)
+#define EVAL2(V...)    EVAL1(EVAL1(V))
+#define EVAL4(V...)    EVAL2(EVAL2(V))
+#define EVAL8(V...)    EVAL4(EVAL4(V))
+#define EVAL16(V...)   EVAL8(EVAL8(V))
+#define EVAL32(V...)   EVAL16(EVAL16(V))
+#define EVAL64(V...)   EVAL32(EVAL32(V))
+#define EVAL128(V...)  EVAL64(EVAL64(V))
+#define EVAL256(V...)  EVAL128(EVAL128(V))
+#define EVAL512(V...)  EVAL256(EVAL256(V))
+#define EVAL1024(V...) EVAL512(EVAL512(V))
+#define EVAL2048(V...) EVAL1024(EVAL1024(V))
+#define EVAL4096(V...) EVAL2048(EVAL2048(V))
+#define EVAL(V...)     EVAL16(V)
 
 //
 // REPEAT core macros. Recurse N times with ascending I.

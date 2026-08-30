@@ -3,12 +3,12 @@
  * it is used to configure the arduino core (and ddl) automatically according
  * to the settings in Configuration.h and Configuration_adv.h.
  */
-#pragma once
-#ifndef _HC32_APP_CONFIG_H_
-#define _HC32_APP_CONFIG_H_
-
-#include "../../inc/MarlinConfigPre.h"
-#include "sysclock.h"
+// #pragma once
+// #ifndef _HC32_APP_CONFIG_H_
+// #define _HC32_APP_CONFIG_H_
+//
+// #include "../../inc/MarlinConfigPre.h"
+// #include "sysclock.h"
 
 //
 // dev mode
@@ -72,4 +72,4 @@
 // see 'sysclock.h' for more information.
 #define F_CPU F_HCLK
 
-#endif // _HC32_APP_CONFIG_H_
+// #endif // _HC32_APP_CONFIG_H_

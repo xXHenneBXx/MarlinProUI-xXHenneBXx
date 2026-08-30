@@ -27,8 +27,11 @@ if len(sys.argv) > 1 and sys.argv[1] in ['-d', '--default']:
     use_example_configs()
 else:
     files_to_checkout = [
+        "Marlin/_Bootscreen.h",
+        "Marlin/_Statusscreen.h",
         "Marlin/Configuration.h",
         "Marlin/Configuration_adv.h",
+        "Marlin/Version.h",
         "Marlin/config.ini",
         "Marlin/src/pins/*/pins_*.h"
     ]

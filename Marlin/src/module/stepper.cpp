@@ -130,6 +130,10 @@ Stepper stepper; // Singleton
   #include "../HAL/ESP32/i2s.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 // public:
 
 #if ANY(HAS_EXTRA_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)

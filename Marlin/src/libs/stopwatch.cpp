@@ -28,6 +28,10 @@
   #include "../lcd/extui/ui_api.h"
 #endif
 
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+#endif
+
 Stopwatch::State Stopwatch::state;
 uint32_t Stopwatch::accumulator;
 uint32_t Stopwatch::startTimestamp;

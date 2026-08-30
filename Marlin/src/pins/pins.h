@@ -22,9 +22,7 @@
 #pragma once
 
 /**
- * File: pins/pins.h
- *
- * Include pins definitions
+ * pins.h - Include pins definitions
  *
  * Pins numbering schemes:
  *
@@ -631,15 +629,15 @@
 #elif MB(CHITU3D_V9)
   #include "stm32f1/pins_CHITU3D_V9.h"              // STM32F1                              env:chitu_f103 env:chitu_f103_maple
 #elif MB(CREALITY_V4)
-  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
+  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 #elif MB(CREALITY_V422)
-  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
+  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 #elif MB(CREALITY_V423)
   #include "stm32f1/pins_CREALITY_V423.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer
 #elif MB(CREALITY_V425)
   #include "stm32f1/pins_CREALITY_V425.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V427)
-  #include "stm32f1/pins_CREALITY_V427.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
+  #include "stm32f1/pins_CREALITY_V427.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple
 #elif MB(CREALITY_V4210)
   #include "stm32f1/pins_CREALITY_V4210.h"          // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V431, CREALITY_V431_A, CREALITY_V431_B, CREALITY_V431_C, CREALITY_V431_D)
@@ -685,7 +683,7 @@
 #elif MB(MD_D301)
   #include "stm32f1/pins_MD_D301.h"                 // STM32F1                              env:mingda_d301 env:mingda_d301_maple
 #elif MB(VOXELAB_AQUILA)
-  #include "gd32f1/pins_VOXELAB_AQUILA.h"           // GD32F1, N32G4, STM32F1               env:GD32F103RC_voxelab_maple env:N32G455RE_voxelab_maple env:STM32F103RE_creality_maple env:STM32F103RE_creality
+  #include "gd32f1/pins_VOXELAB_AQUILA.h"           // GD32F1, N32G4, STM32F1               env:GD32F103RC_voxelab_maple env:N32F103RC_voxelab_maple env:N32G455RE_voxelab_maple env:STM32F103RE_creality_maple env:STM32F103RE_creality
 #elif MB(SPRINGER_CONTROLLER)
   #include "stm32f1/pins_ORCA_3D_SPRINGER.h"        // STM32F1                              env:STM32F103VC_orca3d
 #elif MB(ATOMSTACK_FB5_V2)
@@ -787,7 +785,7 @@
 #elif MB(ARTILLERY_RUBY)
   #include "stm32f4/pins_ARTILLERY_RUBY.h"          // STM32F4                              env:Artillery_Ruby
 #elif MB(CREALITY_V24S1_301F4)
-  #include "stm32f4/pins_CREALITY_V24S1_301F4.h"    // STM32F4                              env:STM32F401RC_creality env:STM32F401RC_creality_nobootloader env:STM32F401RC_creality_jlink env:STM32F401RC_creality_stlink
+  #include "stm32f4/pins_CREALITY_V24S1_301F4.h"    // STM32F4                              env:STM32F401RC_creality env:STM32F401RC_creality_nobootloader env:STM32F401RC_creality_jlink env:STM32F401RC_creality_stlink env:STM32F401RE_creality
 #elif MB(CREALITY_CR4NTXXC10)
   #include "stm32f4/pins_CREALITY_CR4NTXXC10.h"     // STM32F4                              env:STM32F401RE_freeruns env:STM32F401RE_freeruns_jlink env:STM32F401RE_freeruns_stlink
 #elif MB(FYSETC_SPIDER_KING_V1_F407)
@@ -834,7 +832,7 @@
 //
 
 #elif MB(CREALITY_CR4NS)
-  #include "stm32f1/pins_CREALITY_CR4NS.h"          // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_maple
+  #include "stm32f1/pins_CREALITY_CR4NS.h"          // STM32F1, GD32F3                      env:GD32F303RE_creality_mfl env:STM32F103RE_creality env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 
 //
 // ARM Cortex-M7
@@ -929,7 +927,7 @@
 //
 
 #elif MB(AQUILA_V101)
-  #include "hc32f4/pins_AQUILA_101.h"               // HC32F460                             env:HC32F460C_aquila_101 env:HC32F460C_openhc32boot
+  #include "hc32f4/pins_AQUILA_101.h"               // HC32F460                             env:HC32F460C_aquila_101 env:HC32F460C_aquila_C2 env:HC32F460C_openhc32boot
 #elif MB(CREALITY_ENDER2P_V24S4)
   #include "hc32f4/pins_CREALITY_ENDER2P_V24S4.h"   // HC32F460                             env:HC32F460C_e2p24s4 env:HC32F460C_openhc32boot
 
@@ -1045,7 +1043,7 @@
     #error "BOARD_STM32F1R is now BOARD_STM32F103RE. Please update your configuration."
   #elif MB(STM32F103R)
     #error "BOARD_STM32F103R is now BOARD_STM32F103RE. Please update your configuration."
-  #elif MOTHERBOARD == BOARD_ESP32
+  #elif MB(ESP32)
     #error "BOARD_ESP32 is now BOARD_ESPRESSIF_ESP32. Please update your configuration."
   #elif MB(STEVAL)
     #error "BOARD_STEVAL_3DP001V1 (BOARD_STEVAL) is no longer supported in Marlin."
