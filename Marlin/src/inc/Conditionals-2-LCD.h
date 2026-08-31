@@ -518,15 +518,15 @@
  * I do suggest running both to get used to USART run a Nextion software instance and USART since its in chinese since audiobrians translated version is buggy
  * certain options and menus become unavailable or dont work so use the official below
  * OFFICIAL SOFTWARE FROM USART here: http://wiki.tjc1688.com/download/usart_hmi.html
- * xXHenneBXx: Currently in WIP development of newer firmware using latest USART-HMI, have been able to successfuly capture handshake and move to main page !!
- * We MAY be able EVEN SIMPLER YET send custom icon images directly through serial and store them directly onto RAM
+ * xXHenneBXx: Currently in WIP development of newer firmware using latest USART-HMI, have been able to successfuly capture hex formats,op codes, etc and translate to human readable(mostly) !!
+ * We MAY be able EVEN SIMPLER YET be able to send custom icon images directly through serial and store them directly onto RAM
  * Noticeably on git "UNUF" had made some tools years back for TJC/Nextion screens kinda like a decompiler
  * I have since muchly updated it for TJC screens decompiling most opt codes and other usercode info needed !!
  * replication and building the firmware is much easier, as well I have been debugging through using a pico2 to serial TX/RX to capture raw output(using the current MRISCOC-Bugfix)
  * of the TJC screens capturing every moment from handshake to floating temps and rotary knob movements etc; I will provide these on my github https://github.com/xXHenneBXx
  * I must note that the Tools I have rebuilt may be a little buggy still,some code may not be EXACTLY properly decompiled, so it may need some fixing up and cleaning up to do to properly get all opt codes etc
  * Though USART-HMI ALSO has its own prebuilt in icons that get placed into the firmware if a certain tool is enabled, such as file viewer
- * TJC_DISPLAY with now ExtUI(ProUI Under the hood)
+ *
  *
  * ////////////////////////////////////////////////////////////////////////////
  * // TODO: Make a G-Code able to send and store newer custom icons to SRAM  // 
