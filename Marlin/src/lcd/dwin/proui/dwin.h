@@ -1,36 +1,6 @@
-/**
- * Marlin 3D Printer Firmware
- * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
- *
- * Based on Sprinter and grbl.
- * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- */
 #pragma once
 
-/**
- * DWIN Enhanced implementation for PRO UI
- * Based on the original work of: Miguel Risco-Castillo (MRISCOC)
- * https://github.com/mriscoc/Ender3V2S1
- * Version: 3.25.3
- * Date: 2023/05/18
- */
-
 #include "../../../inc/MarlinConfig.h"
-
 #include "dwin_defines.h"
 #include "dwinui.h"
 #include "../common/encoder.h"
@@ -39,6 +9,9 @@
 #include "../../../MarlinCore.h"
 #if ENABLED(LED_CONTROL_MENU)
   #include "../../../feature/leds/leds.h"
+#endif
+#if HAS_TOOLBAR
+  #include "toolbar.h"
 #endif
 
 namespace GET_LANG(LCD_LANGUAGE) {
@@ -51,7 +24,6 @@ namespace GET_LANG(LCD_LANGUAGE) {
 }
 
 enum processID : uint8_t {
-  // Process ID
   ID_MainMenu,
   ID_Menu,
   ID_SetInt,
@@ -74,7 +46,6 @@ enum processID : uint8_t {
 };
 
 #if ANY(HAS_PID_HEATING, MPC_AUTOTUNE)
-
   enum TempControl {
     AUTOTUNE_DONE,
     #if HAS_PID_HEATING
@@ -98,16 +69,13 @@ enum processID : uint8_t {
     #endif
     TEMPCONTROL_COUNT
   };
-
   typedef bits_t(TEMPCONTROL_COUNT) tempcontrol_t;
-
 #endif
 
 #define DWIN_CHINESE 123
 #define DWIN_ENGLISH 0
 
 typedef struct {
-  // Color settings
   uint16_t colorBackground;
   uint16_t colorCursor;
   uint16_t colorTitleBg;
@@ -127,7 +95,6 @@ typedef struct {
   uint16_t colorIndicator;
   uint16_t colorCoordinate;
 
-  // Temperatures
   #if ANY(PIDTEMP, PIDTEMPBED, PIDTEMPCHAMBER)
     int16_t pidCycles = DEF_PIDCYCLES;
   #endif
@@ -156,7 +123,6 @@ typedef struct {
     celsius_t bedLevT = LEVELING_BED_TEMP;
   #endif
 
-  // Various Options
   #if ENABLED(BAUD_RATE_GCODE)
     bool baud115K = false;
   #endif
@@ -180,6 +146,11 @@ typedef struct {
   #if HAS_BED_PROBE && DISABLED(BD_SENSOR)
     uint8_t multiple_probing = MULTIPLE_PROBING;
   #endif
+
+  // FIXED: Injected missing toolbar element data directly into settings memory mapping
+  #if HAS_TOOLBAR
+    uint8_t TBopt[5] = {0, 1, 2, 3, 4};
+  #endif
 } hmi_data_t;
 
 extern hmi_data_t hmiData;
@@ -200,30 +171,29 @@ typedef struct {
 } rgb_t;
 
 typedef struct {
-  rgb_t color;                        // Color
+  rgb_t color;
   #if ANY(HAS_PID_HEATING, MPCTEMP)
     tempcontrol_t tempControl = AUTOTUNE_DONE;
   #endif
-  uint8_t select = 0;                 // Auxiliary selector variable
-  AxisEnum axis = X_AXIS;             // Axis Select
+  uint8_t select = 0;
+  AxisEnum axis = X_AXIS;
 } hmi_value_t;
 
 extern hmi_value_t hmiValue;
 
 typedef struct {
   uint8_t language;
-  bool printing_flag:1; // sd or host printing
-  bool abort_flag:1;    // sd or host was aborted
-  bool pause_flag:1;    // printing is paused
-  bool select_flag:1;   // Popup button selected
-  bool home_flag:1;     // homing in course
-  bool cancel_lev:1;    // cancel abl
+  bool printing_flag:1;
+  bool abort_flag:1;
+  bool pause_flag:1;
+  bool select_flag:1;
+  bool home_flag:1;
+  bool cancel_lev:1;
 } hmi_flag_t;
 
 extern hmi_flag_t hmiFlag;
 extern uint8_t checkkey;
 
-// Popups
 #if HAS_HOTEND || HAS_HEATED_BED || HAS_HEATED_CHAMBER
   void dwinPopupTemperature(const int_fast8_t heater_id, const uint8_t state);
 #endif
@@ -231,7 +201,6 @@ extern uint8_t checkkey;
   void popupPowerLossRecovery();
 #endif
 
-// Tool Functions
 uint32_t getHash(char * str);
 #if ENABLED(EEPROM_SETTINGS)
   void writeEEPROM();
@@ -251,7 +220,7 @@ void disableMotors();
 void autoHome();
 #if HAS_PREHEAT
   void drawPreheatHotendMenu();
-  #define _DOPREHEAT(N) void DoPreheat##N();
+  #define _DOPREHEAT(N) void doPreheat##N();
   REPEAT_1(PREHEAT_COUNT, _DOPREHEAT)
 #endif
 #if HAS_HOTEND || HAS_HEATED_BED
@@ -285,20 +254,19 @@ void autoHome();
   #endif
 #endif
 
-// Other
 void gotoPrintProcess();
 void gotoMainMenu();
 void gotoInfoMenu();
 void gotoPowerLossRecovery();
 void gotoConfirmToPrint();
-void dwinDrawDashboard(); // Status Area
-void drawMainArea();      // Redraw main area
-void dwinDrawStatusLine(const char *text = ""); // Draw simple status text
-void dwinRedrawDash();     // Redraw Dash and Status line
-void dwinRedrawScreen();   // Redraw all screen elements
-void hmiMainMenu();        // Main process screen
-void hmiPrinting();        // Print page
-void hmiReturnScreen();    // Return to previous screen before popups
+void dwinDrawDashboard();
+void drawMainArea();
+void dwinDrawStatusLine(const char *text = "");
+void dwinRedrawDash();
+void dwinRedrawScreen();
+void hmiMainMenu();
+void hmiPrinting();
+void hmiReturnScreen();
 void hmiWaitForUser();
 void hmiSaveProcessID(const uint8_t id);
 void hmiSDCardUpdate();
@@ -337,7 +305,6 @@ void dwinRebootScreen();
   void gotoFilamentPurge();
 #endif
 
-// Utility and extensions
 #if HAS_LOCKSCREEN
   void dwinLockScreen();
   void dwinUnLockScreen();
@@ -355,7 +322,6 @@ void dwinRebootScreen();
   void drawBPlot();
 #endif
 
-// Menu drawing functions
 void drawPrintFileMenu();
 void drawControlMenu();
 void drawAdvancedSettingsMenu();
@@ -414,14 +380,12 @@ void drawMaxAccelMenu();
   void drawTrinamicConfigMenu();
 #endif
 
-// Custom colors editing
 #if HAS_CUSTOM_COLORS
   void dwinApplyColor();
   void drawSelectColorsMenu();
   void drawGetColorMenu();
 #endif
 
-// PID
 #if HAS_PID_HEATING
   #include "../../../module/temperature.h"
   void dwinStartM303(const int count, const heater_id_t hid, const celsius_t temp);
@@ -448,7 +412,6 @@ void drawMaxAccelMenu();
   #endif
 #endif
 
-// MPC
 #if ENABLED(MPCTEMP)
   #if ANY(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
     void drawHotendMPCMenu();
@@ -460,4 +423,8 @@ void drawMaxAccelMenu();
 
 #if PROUI_TUNING_GRAPH
   void dwinDrawPIDMPCPopup();
+#endif
+
+#if HAS_TOOLBAR
+  void drawToolBar();
 #endif

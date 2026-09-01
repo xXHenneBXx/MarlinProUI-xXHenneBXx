@@ -151,7 +151,7 @@
 	#define ICON_Prepare_1           4
 	#define ICON_Control_0           5
 	#define ICON_Control_1           6
-	#define ICON_Leveling_0          7
+	#define ICON_AutoLeveling        7
 	#define ICON_Leveling_1          8
 	#define ICON_HotendTemp          9
 	#define ICON_BedTemp            10
@@ -260,7 +260,7 @@
 #define ICON_FWRetZRaise  ICON_MoveZ
 #define ICON_FWRecSpeed   ICON_Setspeed
 #define ICON_FWRecExtra   ICON_StepE
-
+#define ICON_Level        ICON_StockConfiguration
 
 #if DISABLED(DWIN_CREALITY_LCD_STD_ICONS)
    // Index of custom icons should be >= CUSTOM_ICON_START

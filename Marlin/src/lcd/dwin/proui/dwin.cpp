@@ -46,6 +46,10 @@
 #include "../../../gcode/gcode.h"
 #include "../../../gcode/queue.h"
 
+#if HAS_TOOLBAR
+  #include "toolbar.h"
+#endif
+
 #if HAS_MEDIA
   #include "../../../sd/cardreader.h"
 #endif
@@ -280,6 +284,11 @@ Menu *stepsMenu = nullptr;
     Menu *editMeshMenu = nullptr;
   #endif
 #endif
+
+#if HAS_TOOLBAR
+  Menu *tbSetupMenu = nullptr;
+#endif
+
 #if ENABLED(SHAPING_MENU)
   Menu *inputShapingMenu = nullptr;
 #endif
@@ -345,7 +354,7 @@ void ICON_Button(const bool selected, const int iconid, const frame_rect_t &ico,
 // Main Menu: "Print"
 //
 void ICON_Print() {
-  constexpr frame_rect_t ico = { 17, 110, 110, 100 };
+  constexpr frame_rect_t ico = { 17, 110 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100 };
   constexpr text_info_t txt = { 1, { 405, 447 }, 27, 15 };
   ICON_Button(select_page.now == PAGE_PRINT, ICON_Print_0, ico, txt, GET_TEXT_F(MSG_BUTTON_PRINT));
 }
@@ -354,7 +363,7 @@ void ICON_Print() {
 // Main Menu: "Prepare"
 //
 void ICON_Prepare() {
-  constexpr frame_rect_t ico = { 145, 110, 110, 100 };
+  constexpr frame_rect_t ico = { 145, 110 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100 };
   constexpr text_info_t txt = { 31, { 405, 447 }, 27, 15 };
   ICON_Button(select_page.now == PAGE_PREPARE, ICON_Prepare_0, ico, txt, GET_TEXT_F(MSG_PREPARE));
 }
@@ -363,7 +372,7 @@ void ICON_Prepare() {
 // Main Menu: "Control"
 //
 void ICON_Control() {
-  constexpr frame_rect_t ico = { 17, 226, 110, 100 };
+  constexpr frame_rect_t ico = { 17, 226 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100 };
   constexpr text_info_t txt = { 61, { 405, 447 }, 27, 15 };
   ICON_Button(select_page.now == PAGE_CONTROL, ICON_Control_0, ico, txt, GET_TEXT_F(MSG_CONTROL));
 }
@@ -371,8 +380,8 @@ void ICON_Control() {
 //
 // Main Menu: "Level"
 //
-void ICON_Level() {
-  constexpr frame_rect_t ico = { 145, 226, 110, 100 };
+void drawIconLevel() {
+  constexpr frame_rect_t ico = { 145, 226 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100 };
   constexpr text_info_t txt = { 91, { 405, 447 }, 27, 15 };
   ICON_Button(select_page.now == PAGE_LEVEL, ICON_Leveling_0, ico, txt, GET_TEXT_F(MSG_BUTTON_LEVEL));
 }
@@ -686,7 +695,8 @@ void drawMainMenu() {
   ICON_Print();
   ICON_Prepare();
   ICON_Control();
-  ICON_Level();
+  drawIconLevel();
+  TERN_(HAS_TOOLBAR, drawToolBar());
 }
 
 void gotoMainMenu() {
@@ -1136,6 +1146,7 @@ void drawInfoMenu() {
 }
 
 // Main Process
+
 void hmiMainMenu() {
   EncoderState encoder_diffState = get_encoder_state();
   if (encoder_diffState == ENCODER_DIFF_NO) return;
@@ -1146,7 +1157,7 @@ void hmiMainMenu() {
         case PAGE_PRINT: ICON_Print(); break;
         case PAGE_PREPARE: ICON_Print(); ICON_Prepare(); break;
         case PAGE_CONTROL: ICON_Prepare(); ICON_Control(); break;
-        case PAGE_LEVEL: ICON_Control(); ICON_Level(); break;
+        case PAGE_LEVEL: ICON_Control(); drawIconLevel(); break;
       }
     }
   }
@@ -1155,8 +1166,8 @@ void hmiMainMenu() {
       switch (select_page.now) {
         case PAGE_PRINT: ICON_Print(); ICON_Prepare(); break;
         case PAGE_PREPARE: ICON_Prepare(); ICON_Control(); break;
-        case PAGE_CONTROL: ICON_Control(); ICON_Level(); break;
-        case PAGE_LEVEL: ICON_Level(); break;
+        case PAGE_CONTROL: ICON_Control(); drawIconLevel(); break;
+        case PAGE_LEVEL: break;
       }
     }
   }
@@ -1176,6 +1187,7 @@ void hmiMainMenu() {
   }
   dwinUpdateLCD();
 }
+
 
 // Pause or Stop popup
 void onClickPauseOrStop() {
@@ -1258,7 +1270,7 @@ void drawMainArea() {
     #if HAS_LOCKSCREEN
       case ID_Locked:         lockScreen.draw(); break;
     #endif
-    case ID_Menu:
+    case ID_Menu:         redrawMenu();
     case ID_SetInt:
     case ID_SetPInt:
     case ID_SetIntNoDraw:
@@ -2357,7 +2369,7 @@ void setMoveZ() { hmiValue.axis = Z_AXIS; setPFloatOnClick(Z_MIN_POS, Z_MAX_POS,
   }
 
   void drawPopupFilamentPurge() {
-    dwinDrawPopup(ICON_AutoLeveling, GET_TEXT_F(MSG_ADVANCED_PAUSE), GET_TEXT_F(MSG_FILAMENT_CHANGE_PURGE_CONTINUE));
+    dwinDrawPopup(ICON_Level, GET_TEXT_F(MSG_ADVANCED_PAUSE), GET_TEXT_F(MSG_FILAMENT_CHANGE_PURGE_CONTINUE));
     DWINUI::drawButton(BTN_Purge, 26, 280);
     DWINUI::drawButton(BTN_Continue, 146, 280);
     drawSelectHighlight(true);
@@ -2832,7 +2844,7 @@ void applyMaxAccel() { planner.set_max_acceleration(hmiValue.axis, menuData.valu
   void setRecoverSpeed()  { setPFloatOnClick( 1, 90, UNITFDIGITS); }
   void setAddRecover()    { setPFloatOnClick(-5, 5, UNITFDIGITS); }
 #endif
-
+	
 // Special Menuitem Drawing functions =================================================
 
 void onDrawBack(MenuItem* menuitem, int8_t line) {
@@ -4524,6 +4536,181 @@ void drawMaxAccelMenu() {
 
 #endif // HAS_MESH
 
+//=============================================================================
+// CV Laser Module support
+//=============================================================================
+#if ENABLED(CV_LASER_MODULE)
+
+  // Make the current position 0,0,0
+  void setHome() {
+    laser_device.homepos += current_position;
+    set_all_homed();
+    gcode.process_subcommands_now(F("G92X0Y0Z0"));
+    redrawMenu();
+  }
+
+  void laserOn(const bool turn_on) {
+    laser_device.laser_set(turn_on);
+    dwinDrawDashboard();
+  }
+
+  void laserToggle() {
+    laserOn(!laser_device.is_laser_device());
+    showCheckboxLine(laser_device.is_laser_device());
+  }
+
+  void laserPrint() {
+    if (!laser_device.is_laser_device()) return;
+    thermalManager.disable_all_heaters(); // 关闭加热107011 -20211012
+    print_job_timer.reset();  //107011 -20211009 清除前一次的打印时间
+    laser_device.laser_power_open(); // 打开激光, 以最弱的激光输出。专业固件是最好的
+    // queue.inject_P(PSTR("M999\nG92.9Z0")); // 107011 -20211013
+    card.openAndPrintFile(card.filename);
+  }
+
+  void laserRunRange() {
+    if (!laser_device.is_laser_device()) return;
+    if (!all_axes_trusted()) return LCD_MESSAGE(MSG_LASER_FIRST_HOME);
+    dwinShowPopup(ICON_TempTooHigh, "LASER", "Run Range", BTN_Cancel);
+    hmiSaveProcessID(ID_WaitResponse);
+    laser_device.laser_range();
+  }
+
+  void drawLaserSettingsMenu() {
+    enableLiveMove = true;
+    if (isMenu(laserSettings)) {
+      BACK_ITEM(returnToPreviousMenu);
+      EDIT_ITEM(ICON_LaserToggle, MSG_LASER_TOGGLE, onDrawChkbMenu, laserToggle, &laser_device.laser_enabled);
+      MENU_ITEM(ICON_Homing, MSG_AUTO_HOME, onDrawMenuItem, autoHome);
+      EDIT_ITEM(ICON_LaserFocus, MSG_LASER_FOCUS, onDrawPFloatMenu, setMoveZ, &current_position.z);
+      EDIT_ITEM(ICON_MoveX, MSG_MOVE_X, onDrawPFloatMenu, setMoveX, &current_position.x);
+      EDIT_ITEM(ICON_MoveY, MSG_MOVE_Y, onDrawPFloatMenu, setMoveY, &current_position.y);
+      MENU_ITEM(ICON_SetHome, MSG_SET_AS_HOME, onDrawMenuItem, setHome);
+    }
+    SET_MENU(laserSettings, MSG_LASER_MENU);
+  }
+
+  void drawLaserPrintMenu() {
+    if (!laser_device.is_laser_device()) return gotoMainMenu();
+    if (isMenu(laserPrintMenu)) {
+      BACK_ITEM(drawFileMenu);
+      MENU_ITEM(ICON_SetHome, MSG_CONFIGURATION, onDrawSubMenu, drawLaserSettingsMenu);
+      MENU_ITEM(ICON_LaserPrint, MSG_LASER_ENGRAVING, onDrawMenuItem, laserPrint);
+      MENU_ITEM(ICON_LaserRunRange, MSG_LASER_RUN_RANGE, onDrawMenuItem, laserRunRange);
+    }
+    SET_MENU(laserPrintMenu, MSG_LASER_MENU);
+    char buf[23], str_1[5], str_2[5];
+    sprintf_P(buf, PSTR("XMIN: %s XMAX: %s"), dtostrf(LASER_XMIN, 1, 1, str_1), dtostrf(LASER_XMAX, 1, 1, str_2));
+    DWINUI::drawString(LBLX, MBASE(4) + 10, buf);
+    sprintf_P(buf, PSTR("YMIN: %s YMAX: %s"), dtostrf(LASER_YMIN, 1, 1, str_1), dtostrf(LASER_YMAX, 1, 1, str_2));
+    DWINUI::drawString(LBLX, MBASE(5) - 10, buf);
+  }
+
+#endif // CV_LASER_MODULE
+
+//=============================================================================
+// toolBar
+//=============================================================================
+#if HAS_TOOLBAR
+
+  #ifndef ICON_TBSetup
+    #define ICON_TBSetup ICON_AdvSet
+  #endif
+
+  void updateTBSetupItem(int8_t pos, uint8_t val);
+  void onDrawTBSetupItem(MenuItem* menuitem, int8_t line);
+  void setTBSetupItem();
+
+  void drawTBSetupMenu() {
+    checkkey = ID_Menu;
+    if (SET_MENU(tbSetupMenu, MSG_TOOLBAR_SETUP, TBMaxOpt + 1)) {
+      BACK_ITEM(drawAdvancedSettingsMenu);
+      for (uint8_t i = 0; i < TBMaxOpt; ++i) {
+        EDIT_ITEM_F(0, "", onDrawTBSetupItem, setTBSetupItem, &hmiData.TBopt[i]);
+      }
+    }
+  }
+
+  void updateTBSetupItem(int8_t pos, uint8_t val) {
+    if (pos < 0 || val >= TBGetCount()) return;
+    CustomMenuItem** items = Menu::items();
+    if (!items || !items[pos]) return;
+    MenuItem *item = static_cast<MenuItem*>(items[pos]);
+    item->icon = TBItemA[val].icon;
+    if (TBItemA[val].caption)
+      item->setCaption(FTOP(TBItemA[val].caption));
+    else
+      item->setCaption("");
+  }
+
+  void drawTBSetupItem(bool focused) {
+    if (!currentMenu) return;
+    const int8_t line = currentMenu->line();
+    CustomMenuItem* citem = currentMenu->selectedItem();
+    if (!citem) return;
+    if (focused) {
+      eraseMenuCursor(line);
+      drawMenuCursor(line);
+    }
+    citem->draw(line);
+    dwinUpdateLCD();
+  }
+
+  void liveTBSetupItem() {
+    updateTBSetupItem(currentMenu->selected, menuData.value);
+    drawTBSetupItem(true);
+  }
+
+  void applyTBSetupItem() {
+    drawTBSetupItem(false);
+    MenuItemPtr *item = static_cast<MenuItemPtr*>(currentMenu->selectedItem());
+    if (item && item->value) {
+      uint8_t *Pint = static_cast<uint8_t*>(item->value);
+      *Pint = menuData.value;
+    }
+  }
+
+  void setTBSetupItem() {
+    MenuItemPtr *item = static_cast<MenuItemPtr*>(currentMenu->selectedItem());
+    if (!item) return;
+
+    const uint8_t val = item->value
+      ? *static_cast<uint8_t*>(item->value)
+      : 0;
+
+    setOnClick(
+      ID_SetIntNoDraw,
+      0,
+      TBGetCount() - 1,
+      0,
+      val,
+      applyTBSetupItem,
+      liveTBSetupItem
+    );
+
+    drawTBSetupItem(true);
+  }
+
+  void onDrawTBSetupItem(MenuItem* menuitem, int8_t line) {
+    if (!menuitem) return;
+
+    const int8_t pos = menuitem->pos;
+    if (pos < 0 || pos >= currentMenu->count()) return;
+
+    MenuItemPtr *item = static_cast<MenuItemPtr*>(menuitem);
+
+    const uint8_t val = item->value
+      ? *static_cast<uint8_t*>(item->value)
+      : 0;
+
+    updateTBSetupItem(pos, val);
+    onDrawMenuItem(item, line);
+  }
+
+#endif // HAS_TOOLBAR
+
+
+
 void drawLevelMenu() {
   constexpr uint8_t items = (1
     + ENABLED(EEPROM_SETTINGS)
@@ -4558,6 +4745,9 @@ void drawLevelMenu() {
         MENU_ITEM(ICON_MeshEdit, MSG_EDIT_MESH, onDrawSubMenu, drawEditMeshMenu);
         MENU_ITEM(ICON_MeshReset, MSG_MESH_RESET, onDrawMenuItem, resetMesh);
       #endif
+    #endif
+	#if HAS_TOOLBAR
+      MENU_ITEM(ICON_TBSetup, MSG_TOOLBAR_SETUP, onDrawSubMenu, drawTBSetupMenu);
     #endif
     #if ENABLED(AUTO_BED_LEVELING_UBL)
       #if HAS_MESH_STORAGE

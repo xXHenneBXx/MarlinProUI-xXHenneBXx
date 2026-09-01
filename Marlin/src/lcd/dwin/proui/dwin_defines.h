@@ -54,6 +54,12 @@
   #define DASH_REDRAW 1
 #endif
 
+
+#ifndef TBYOFFSET
+  #define TBYOFFSET 20
+#endif
+
+
 #define HAS_FEEDRATE_EDIT 1   // Feedrate percentage
 #define HAS_FLOW_EDIT 1       // Flow percentage
 
@@ -127,7 +133,7 @@
 /**
  * ProUI internal feature flags
  */
-#if ProUI 1
+#ifdef ProUI
   #if HAS_BED_PROBE
     #define PROUI_ITEM_ZFR      // Add a menu item to change Z_PROBE_FEEDRATE_SLOW - probe speed
   #endif
@@ -172,4 +178,5 @@
   #endif
   #define HAS_FEEDRATE_EDIT 1 // Feedrate percentage
   #define HAS_FLOW_EDIT 1     // Flow percentage
+  #define HAS_TOOLBAR 1       // Enable Toolbar
 #endif

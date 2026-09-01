@@ -568,4 +568,4 @@ void redrawItem() {
   static_cast<MenuItemPtr*>(currentMenu->selectedItem())->value;
 }
 
-#endif // DWIN_LCD_PROUI && TJC_DISPLAY
+#endif // ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
