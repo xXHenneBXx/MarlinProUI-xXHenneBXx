@@ -149,7 +149,7 @@ typedef struct {
 
   // FIXED: Injected missing toolbar element data directly into settings memory mapping
   #if HAS_TOOLBAR
-    uint8_t TBopt[5] = {0, 1, 2, 3, 4};
+    uint8_t TBopt[5] = {1, 2, 3, 4, 5};
   #endif
 } hmi_data_t;
 
@@ -240,8 +240,8 @@ void autoHome();
 #if ENABLED(NOZZLE_PARK_FEATURE)
   void parkHead();
 #endif
-#if HAS_ONESTEP_LEVELING
-  void trammingwizard();
+#if ENABLED(ASSISTED_TRAMMING)
+  void trammingWizard();
 #endif
 #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
   void applyLEDColor();

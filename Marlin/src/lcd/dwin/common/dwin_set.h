@@ -261,6 +261,8 @@
 #define ICON_FWRecSpeed   ICON_Setspeed
 #define ICON_FWRecExtra   ICON_StepE
 #define ICON_Level        ICON_StockConfiguration
+#define ICON_Tram         ICON_Step
+#define ICON_Reboot       ICON_ResetEEPROM
 
 #if DISABLED(DWIN_CREALITY_LCD_STD_ICONS)
    // Index of custom icons should be >= CUSTOM_ICON_START

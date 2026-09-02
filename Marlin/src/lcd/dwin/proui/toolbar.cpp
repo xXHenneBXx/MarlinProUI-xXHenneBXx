@@ -1,5 +1,5 @@
 /**
- * toolBar for ProUI
+ * toolBar for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
  * version: 3.2.0
  * Date: 2023/09/12
@@ -17,42 +17,44 @@ uint8_t TBGetCount() {
   return COUNT(TBItemA);
 }
 
-// Draw toolbar as a horizontal icon row at the bottom of the main screen.
-// Icons are spaced evenly across the screen width.
-// The hmiData.TBopt[] array maps each slot (0..TBMaxOpt-1) to an index in TBItemA[].
-// Slot value 0 means "disabled" (no icon drawn).
+// Horizontal position of each toolbar slot
+static uint16_t tbSlotX(uint8_t slot) {
+  const uint16_t iconSpacing = (DWIN_WIDTH - 2 * B_XPOS) / TBMaxOpt;
+  return B_XPOS + slot * iconSpacing;
+}
+
+// Draw toolbar as a horizontal icon row at the bottom of the main screen (visual overlay)
 void drawToolBar() {
   const uint8_t count = TBGetCount();
-  if (count <= 1) return; // Only "disabled" entry exists, nothing to draw
+  if (count == 0) return;
 
-  // Draw opaque toolbar background strip — must be drawn before icons
+  // Draw opaque toolbar background strip
   dwinDrawRectangle(1, hmiData.colorBackground, 0, TBYPOS, DWIN_WIDTH - 1, STATUS_Y - 1);
-  // Draw a thin separator line above the toolbar
+  // Separator line
   dwinDrawLine(hmiData.colorSplitLine, 0, TBYPOS, DWIN_WIDTH - 1, TBYPOS);
-
-  // Calculate horizontal spacing for TBMaxOpt slots
-  const uint16_t iconSpacing = (DWIN_WIDTH - 2 * B_XPOS) / TBMaxOpt;
 
   for (uint8_t i = 0; i < TBMaxOpt; i++) {
     const uint8_t itemIdx = hmiData.TBopt[i];
-    if (itemIdx == 0 || itemIdx >= count) continue; // Skip disabled or out-of-range slots
-
-    const uint16_t x = B_XPOS + i * iconSpacing;
-    DWINUI::drawIcon(TBItemA[itemIdx].icon, x, B_YPOS);
+    if (itemIdx == 0 || itemIdx >= count) continue;
+    DWINUI::drawIcon(TBItemA[itemIdx].icon, tbSlotX(i), B_YPOS);
   }
 }
 
-// Execute the toolbar action for a given slot index (0..TBMaxOpt-1)
-// Returns true if an action was triggered.
+// Draw a selection highlight frame around a toolbar slot (like main menu button frame)
+void drawToolBarHighlight(uint8_t selectedSlot) {
+  if (selectedSlot >= TBMaxOpt) return;
+  const uint16_t x = tbSlotX(selectedSlot);
+  // 1px frame outline like main menu buttons, using colorHighlight
+  dwinDrawBox(0, hmiData.colorHighlight, x - 3, B_YPOS - 3, 26, 26);
+}
+
+// Execute the toolbar action for a given slot index
 bool toolbarClick(uint8_t slot) {
   if (slot >= TBMaxOpt) return false;
   const uint8_t itemIdx = hmiData.TBopt[slot];
   if (itemIdx == 0 || itemIdx >= TBGetCount()) return false;
   auto cb = TBItemA[itemIdx].onClick;
-  if (cb) {
-    cb();
-    return true;
-  }
+  if (cb) { cb(); return true; }
   return false;
 }
 

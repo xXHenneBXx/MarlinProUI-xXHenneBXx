@@ -178,11 +178,18 @@ hmi_value_t hmiValue;
 hmi_flag_t hmiFlag{0};
 hmi_data_t hmiData;
 
+#if HAS_TOOLBAR
+  uint8_t tbSelectedSlot = 0;  // Currently highlighted toolbar slot when PAGE_TOOLBAR is active
+#endif
+
 enum SelectItem : uint8_t {
   PAGE_PRINT = 0,
   PAGE_PREPARE,
   PAGE_CONTROL,
   PAGE_LEVEL,
+  #if HAS_TOOLBAR
+    PAGE_TOOLBAR,
+  #endif
   PAGE_COUNT,
 
   PRINT_SETUP = 0,
@@ -1151,6 +1158,37 @@ void hmiMainMenu() {
   EncoderState encoder_diffState = get_encoder_state();
   if (encoder_diffState == ENCODER_DIFF_NO) return;
 
+  #if HAS_TOOLBAR
+    // When toolbar is focused, encoder navigates toolbar slots instead of pages
+    if (select_page.now == PAGE_TOOLBAR) {
+      if (encoder_diffState == ENCODER_DIFF_CW) {
+        if (tbSelectedSlot < TBMaxOpt - 1) {
+          tbSelectedSlot++;
+          drawToolBar();
+          drawToolBarHighlight(tbSelectedSlot);
+        }
+      }
+      else if (encoder_diffState == ENCODER_DIFF_CCW) {
+        if (tbSelectedSlot > 0) {
+          tbSelectedSlot--;
+          drawToolBar();
+          drawToolBarHighlight(tbSelectedSlot);
+        }
+        else {
+          // At slot 0, CCW goes back to PAGE_LEVEL
+          select_page.now = PAGE_LEVEL;
+          drawIconLevel();
+          drawToolBar();  // Redraw toolbar to clear the highlight frame
+        }
+      }
+      else if (encoder_diffState == ENCODER_DIFF_ENTER) {
+        toolbarClick(tbSelectedSlot);
+      }
+      dwinUpdateLCD();
+      return;  // Handled, don't fall through to page navigation
+    }
+  #endif
+
   if (encoder_diffState == ENCODER_DIFF_CW) {
     if (select_page.inc(PAGE_COUNT)) {
       switch (select_page.now) {
@@ -1158,6 +1196,12 @@ void hmiMainMenu() {
         case PAGE_PREPARE: ICON_Print(); ICON_Prepare(); break;
         case PAGE_CONTROL: ICON_Prepare(); ICON_Control(); break;
         case PAGE_LEVEL: ICON_Control(); drawIconLevel(); break;
+        #if HAS_TOOLBAR
+          case PAGE_TOOLBAR:
+            tbSelectedSlot = 0;
+            drawIconLevel(); drawToolBar(); drawToolBarHighlight(0);
+            break;
+        #endif
       }
     }
   }
@@ -1167,7 +1211,11 @@ void hmiMainMenu() {
         case PAGE_PRINT: ICON_Print(); ICON_Prepare(); break;
         case PAGE_PREPARE: ICON_Prepare(); ICON_Control(); break;
         case PAGE_CONTROL: ICON_Control(); drawIconLevel(); break;
-        case PAGE_LEVEL: break;
+        case PAGE_LEVEL:
+          #if HAS_TOOLBAR
+            drawIconLevel(); drawToolBar();
+          #endif
+          break;
       }
     }
   }
@@ -2627,7 +2675,7 @@ void gotoConfirmToPrint() {
 
   #if HAS_BED_PROBE && HAS_MESH
 
-    void trammingwizard() {
+    void trammingWizard() {
       if (hmiData.fullManualTramming) {
         LCD_MESSAGE_F("Disable manual tramming");
         return;
@@ -3305,7 +3353,7 @@ void drawPrepareMenu() {
     if (SET_MENU(trammingMenu, MSG_BED_TRAMMING, items)) {
       BACK_ITEM(drawPrepareMenu);
       #if HAS_BED_PROBE && HAS_MESH
-        MENU_ITEM(ICON_Tram, MSG_TRAMMING_WIZARD, onDrawMenuItem, trammingwizard);
+        MENU_ITEM(ICON_Tram, MSG_TRAMMING_WIZARD, onDrawMenuItem, trammingWizard);
         EDIT_ITEM(ICON_Version, MSG_BED_TRAMMING_MANUAL, onDrawChkbMenu, setManualTramming, &hmiData.fullManualTramming);
       #elif !HAS_BED_PROBE && HAS_ZOFFSET_ITEM
         MENU_ITEM_F(ICON_MoveZ0, "Home Z and disable", onDrawMenuItem, homeZAndDisable);
@@ -4746,7 +4794,7 @@ void drawLevelMenu() {
         MENU_ITEM(ICON_MeshReset, MSG_MESH_RESET, onDrawMenuItem, resetMesh);
       #endif
     #endif
-	#if HAS_TOOLBAR
+    #if HAS_TOOLBAR
       MENU_ITEM(ICON_TBSetup, MSG_TOOLBAR_SETUP, onDrawSubMenu, drawTBSetupMenu);
     #endif
     #if ENABLED(AUTO_BED_LEVELING_UBL)

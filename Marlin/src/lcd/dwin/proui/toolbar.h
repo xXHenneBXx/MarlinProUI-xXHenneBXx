@@ -32,7 +32,7 @@
 #define B_XPOS 24
 
 // Maximum number of toolbar slots visible on screen
-constexpr uint8_t TBMaxOpt = 5;
+constexpr uint8_t TBMaxOpt = 8;
 
 typedef struct {
   uint8_t icon = 0;
@@ -47,6 +47,9 @@ uint8_t TBGetCount();
 
 // Draw the toolbar icon row at the bottom of the screen (overlay on main menu)
 void drawToolBar();
+
+// Draw the toolbar with a selection highlight on the given slot (0..TBMaxOpt-1)
+void drawToolBarHighlight(uint8_t selectedSlot);
 
 // Execute the toolbar action for a given slot index (0..TBMaxOpt-1)
 bool toolbarClick(uint8_t slot);
