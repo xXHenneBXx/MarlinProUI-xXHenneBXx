@@ -149,7 +149,7 @@ typedef struct {
 
   // FIXED: Injected missing toolbar element data directly into settings memory mapping
   #if HAS_TOOLBAR
-    uint8_t TBopt[5] = {1, 2, 3, 4, 5};
+    uint8_t TBopt[8] = {1, 2, 3, 4, 5, 6, 7, 8};
   #endif
 } hmi_data_t;
 

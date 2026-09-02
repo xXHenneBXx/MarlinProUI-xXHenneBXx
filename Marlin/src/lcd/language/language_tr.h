@@ -59,6 +59,7 @@ namespace LanguageNarrow_tr {
   LSTR MSG_LEVEL_BED_WAITING              = _UxGT("Başlatmak için tıkla");                     // Click to Begin
   LSTR MSG_LEVEL_BED_NEXT_POINT           = _UxGT("Sonraki Nokta");                            // Next Point
   LSTR MSG_LEVEL_BED_DONE                 = _UxGT("Seviyeleme Tamam!");                        // Leveling Done!
+  LSTR MSG_TOOLBAR_SETUP                  = _UxGT("Araç Çubuğu Kurulumu");                     // Toolbar Setup
   LSTR MSG_SET_HOME_OFFSETS               = _UxGT("Ofset Ayarla");                             // Set Home Offsets
   LSTR MSG_HOME_OFFSETS_APPLIED           = _UxGT("Ofset Tamam");                              // Offsets Applied
   LSTR MSG_PREHEAT_1                      = _UxGT("ÖnIsıtma ") PREHEAT_1_LABEL;                // Preheat (PREHEAT_1_LABEL)

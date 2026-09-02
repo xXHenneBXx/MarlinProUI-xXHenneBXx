@@ -54,6 +54,7 @@ namespace LanguageNarrow_de {
   LSTR MSG_AUTO_HOME_Y                    = _UxGT("Home Y");                                   // Home Y
   LSTR MSG_AUTO_HOME_Z                    = _UxGT("Home Z");                                   // Home Z
   LSTR MSG_LEVEL_BED_HOMING               = _UxGT("XYZ homen");                                // Homing XYZ
+  LSTR MSG_TOOLBAR_SETUP                  = _UxGT("Toolbar Einstellung");
   LSTR MSG_LEVEL_BED_WAITING              = _UxGT("Klick zum Starten");                        // Click to Begin
   LSTR MSG_LEVEL_BED_NEXT_POINT           = _UxGT("Nächste Koordinate");                       // Next Point
   LSTR MSG_LEVEL_BED_DONE                 = _UxGT("Nivellieren fertig!");                      // Leveling Done!

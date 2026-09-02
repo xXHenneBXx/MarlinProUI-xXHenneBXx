@@ -78,6 +78,8 @@ namespace LanguageNarrow_en {
   LSTR MSG_MEDIA_INSERTED                 = MEDIA_TYPE_EN _UxGT(" Inserted");
   LSTR MSG_MEDIA_REMOVED                  = MEDIA_TYPE_EN _UxGT(" Removed");
   LSTR MSG_LCD_ENDSTOPS                   = _UxGT("Endstops");
+  LSTR MSG_TOOLBAR                    = _UxGT("Toolbar");
+  LSTR MSG_TOOLBAR_SETUP              = _UxGT("Toolbar Setup");
   LSTR MSG_MAIN_MENU                      = _UxGT("Main Menu");
   LSTR MSG_DISABLE_STEPPERS               = _UxGT("Disable Steppers");
   LSTR MSG_HOMING                         = _UxGT("Homing");
@@ -962,6 +964,7 @@ namespace LanguageNarrow_en {
   LSTR DGUS_MSG_EXECUTING_COMMAND         = _UxGT("Executing command...");
   LSTR DGUS_MSG_BED_PID_DISABLED          = _UxGT("Bed PID disabled");
   LSTR DGUS_MSG_PID_DISABLED              = _UxGT("PID disabled");
+  LSTR MSG_OPTION_DISABLED                = _UxGT("Option Disabled");
   LSTR DGUS_MSG_PID_AUTOTUNING            = _UxGT("PID autotuning...");
   LSTR DGUS_MSG_INVALID_RECOVERY_DATA     = _UxGT("Invalid recovery data");
   LSTR DGUS_MSG_HOMING_REQUIRED           = _UxGT("Homing required");

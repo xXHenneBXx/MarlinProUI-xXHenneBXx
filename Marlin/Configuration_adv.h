@@ -35,6 +35,16 @@
  */
 #define CONFIGURATION_ADV_H_VERSION 02010300
 
+
+// @section Architecture
+
+/** select the architecture needed
+ * TODO: Add More 
+ */
+#ifdef BOARD_CREALITY_V422_GD32_MFL
+  #define ARDUINO_ARCH_MF
+#endif
+
 // @section develop
 
 /**
@@ -1139,7 +1149,7 @@
  *
  * Add the G35 command to measure bed corners and help adjust screws. Requires a bed probe.
  */
-//#define ASSISTED_TRAMMING
+#define ASSISTED_TRAMMING 1
 #if ENABLED(ASSISTED_TRAMMING)
 
   // Define from 3 to 9 points to probe.

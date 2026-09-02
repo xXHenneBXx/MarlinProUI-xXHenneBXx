@@ -69,12 +69,14 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_CREALITY_V422 // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V4  BOARD_CREALITY_V422_GD32_MFL BOARD_CREALITY_CR4NS
+  #define MOTHERBOARD BOARD_CREALITY_V4 // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V4  BOARD_CREALITY_V422_GD32_MFL BOARD_CREALITY_CR4NS
 #endif
+
 
 /** 
  *TESTED: Works With TJC Screens Enabled, Native Firmware, MAPLE VARIANT IS NOT NEEDED !!
  *TESTED: BOARD_CREALITY_V422(V4) + STM32F103RE_Creality ✅ TJC Screen Enabled
+ *TESTED: BOARD_CREALITY_V422(V4) + GD32F303RE_Creality ✅ TJC Screen Enabled
  *TESTED: BOARD_CREALITY_V422_GD32_MFL
 */ 
 
@@ -90,7 +92,7 @@
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
  */
 #define SERIAL_PORT 1     // Set to 1 for STM32/STM32F* / GD32F3* set to 0
-//#define LCD_SERIAL_PORT 2     
+//#define LCD_SERIAL_PORT 3
 #define NO_AUTO_ASSIGN_WARNING  // Disable serial warnings
 //#define NO_MAPLE_WARNING        // Disable warning when using Maple env
 /**
@@ -2327,7 +2329,7 @@
   //========================= Unified Bed Leveling ============================
   //===========================================================================
 
-  //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
+  #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 30  // Center mesh
   #define GRID_MAX_POINTS_X 5      // Don't use more than 15 points per axis, implementation limited.  // xXHenneBXx: must uncomment before CustomVal can set it, or GRID_MAX_POINTS_Y (which references it) breaks the build  // xXHenneBXx: must uncomment before CustomVal can set it, or GRID_MAX_POINTS_Y (which references it) breaks the build
@@ -2392,7 +2394,7 @@
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-//#define LCD_BED_TRAMMING  // ProUI has a bed tramming menu  // ProUI has a bed tramming menu
+#define LCD_BED_TRAMMING  // ProUI has a bed tramming menu  // ProUI has a bed tramming menu
 
 #if ENABLED(LCD_BED_TRAMMING)
   #define BED_TRAMMING_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
@@ -2544,9 +2546,10 @@
  */
 //#define USE_SHARED_EEPROM
 //#define I2C_EEPROM
+//#define USE_WIRED_EEPROM 1
+//#define IIC_BL24CXX_EEPROM
+//#define FORCE_SOFT_SPI
 //#define SOFT_I2C_EEPROM
-#define IIC_BL24CXX_EEPROM
-//#define USE_WIRED_EEPROM
 //#define SDCARD_EEPROM_EMULATION   // TEMP TEST: bypass I2C EEPROM hanging with no screens enabled
 //#define FLASH_EEPROM_EMULATION
 #define EEPROM_SETTINGS     // Persistent storage with M500 and M501  // Ender Configs
@@ -3659,7 +3662,7 @@
   #define HAS_GCODE_PREVIEW 1
   #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)
   #define HAS_CUSTOM_COLORS_MENU 1
-  //#define HAS_TOOLBAR 1
+  #define HAS_TOOLBAR 1
   //#define HAS_FEEDRATE_EDIT 1
   #define HAS_MESH 1
   //#define HAS_ESDIAG 1
@@ -3674,7 +3677,7 @@
   #define PROUI_ITEM_PLR         // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
   //#define PROUI_ITEM_JD           // Juntion Deviation item in Tune Menu (only if JD is enabled)
   //#define PROUI_ITEM_ADVK         // Linear Advance item in Tune Menu (only if LA is enabled)
-  #define PROUI_ITEM_TRAM        // Menu item: enable Tramming Wizard (2304 bytes of flash)
+  //#define PROUI_ITEM_TRAM        // Menu item: enable Tramming Wizard (2304 bytes of flash)
   #define PROUI_MEDIASORT        // Menu item: enable/disable file list sorting (104 bytes of flash)
   //#define PROUI_ITEM_ENC         // Menu item: enable to reverse encoder direction (144 bytes of flash)
   #define PROUI_ITEM_ABRT        // Menu item: enable/disable preconfigured abort commands (224 bytes of flash)
@@ -3686,11 +3689,8 @@
   #define SHOW_SPEED_IND          // Menu item: blink speed in mm/s along with speed percentage (296 bytes of flash)
   //#define NO_BLINK_IND																		
   //#define DEF_PROBEZFIX 0
-  #if ENABLED(LCD_BED_TRAMMING)
-    #define HAS_TRAMMING_WIZARD 1
-  #endif
 
-  #define MESH_EDIT_MENU
+  #define MESH_EDIT_MENU11
   // #define PREVIEW_MENU_ITEM
   // #define ACTIVATE_MESH_ITEM
   //#define RUNOUT_TUNE_ITEM     // Allows enable/disable the run out filament sensor while printing

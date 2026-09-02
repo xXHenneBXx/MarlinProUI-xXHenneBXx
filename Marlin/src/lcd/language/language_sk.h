@@ -67,6 +67,7 @@ namespace LanguageNarrow_sk {
   LSTR MSG_LEVEL_BED_NEXT_POINT           = _UxGT("Ďalší bod");                                // Next Point
   LSTR MSG_LEVEL_BED_DONE                 = _UxGT("Vyrovnanie hotové!");                       // Leveling Done!
   LSTR MSG_SET_HOME_OFFSETS               = _UxGT("Nastav. dom. ofsety");                      // Set Home Offsets
+  LSTR MSG_TOOLBAR_SETUP                  = _UxGT("Panel nástrojov");                        // Toolbar Setup
   LSTR MSG_HOME_OFFSETS_APPLIED           = _UxGT("Ofsety nastavené");                         // Offsets Applied
   LSTR MSG_PREHEAT_1                      = _UxGT("Zahriať ") PREHEAT_1_LABEL;                 // Preheat (PREHEAT_1_LABEL)
   LSTR MSG_PREHEAT_1_H                    = _UxGT("Zahriať ") PREHEAT_1_LABEL " ~";            // Preheat (PREHEAT_1_LABEL) ~
