@@ -151,7 +151,7 @@
 	#define ICON_Prepare_1           4
 	#define ICON_Control_0           5
 	#define ICON_Control_1           6
-	#define ICON_AutoLeveling        7
+	#define ICON_Leveling_0        7
 	#define ICON_Leveling_1          8
 	#define ICON_HotendTemp          9
 	#define ICON_BedTemp            10

@@ -147,7 +147,6 @@ typedef struct {
     uint8_t multiple_probing = MULTIPLE_PROBING;
   #endif
 
-  // FIXED: Injected missing toolbar element data directly into settings memory mapping
   #if HAS_TOOLBAR
     uint8_t TBopt[8] = {1, 2, 3, 4, 5, 6, 7, 8};
   #endif
