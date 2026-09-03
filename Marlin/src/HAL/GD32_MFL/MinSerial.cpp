@@ -107,8 +107,9 @@ static void MinSerialBegin() {
     rcu::RCU_PCLK pclk = clockRegs[SERIAL_PORT];
 
     // Disable then enable usart peripheral clocks
-    rcu::RCU_DEVICE.set_pclk_enable(pclk, false);
-    rcu::RCU_DEVICE.set_pclk_enable(pclk, true);
+    RCU_I.set_pclk_enable(pclk, false);
+    RCU_I.set_pclk_enable(pclk, true);
+
 
     // Save current baudrate
     uint32_t baudrate = USART_BAUD;
