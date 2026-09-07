@@ -78,8 +78,8 @@ namespace LanguageNarrow_en {
   LSTR MSG_MEDIA_INSERTED                 = MEDIA_TYPE_EN _UxGT(" Inserted");
   LSTR MSG_MEDIA_REMOVED                  = MEDIA_TYPE_EN _UxGT(" Removed");
   LSTR MSG_LCD_ENDSTOPS                   = _UxGT("Endstops");
-  LSTR MSG_TOOLBAR                    = _UxGT("Toolbar");
-  LSTR MSG_TOOLBAR_SETUP              = _UxGT("Toolbar Setup");
+  LSTR MSG_TOOLBAR                        = _UxGT("Toolbar");
+  LSTR MSG_TOOLBAR_SETUP                  = _UxGT("Toolbar Setup");
   LSTR MSG_MAIN_MENU                      = _UxGT("Main Menu");
   LSTR MSG_DISABLE_STEPPERS               = _UxGT("Disable Steppers");
   LSTR MSG_HOMING                         = _UxGT("Homing");
