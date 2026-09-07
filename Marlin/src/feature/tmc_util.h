@@ -26,6 +26,9 @@
 
 #if HAS_TRINAMIC_CONFIG
 
+#ifdef ADC_TEMP
+  #undef ADC_TEMP  // Prevent GD32 MFL variant.h macro from clobbering TMCStepper::ADC_TEMP()
+#endif
 #include <TMCStepper.h>
 #include "../module/planner.h"
 
