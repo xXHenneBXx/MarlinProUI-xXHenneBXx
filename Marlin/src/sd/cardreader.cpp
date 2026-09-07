@@ -1039,8 +1039,8 @@ void CardReader::write_command(char * const buf) {
 
     const bool found = selectNewestFile();    // Changes the current workDir if found
     if (found) {
-      //SERIAL_ECHO_MSG(" OCP File: ", longest_filename(), "\n");
-      //ui.init();
+      SERIAL_ECHO_MSG(" OCP File: ", longest_filename(), "\n");
+      ui.init();
       one_click_print();                      // Restores workDir to root (eventually)
     }
     return found;
