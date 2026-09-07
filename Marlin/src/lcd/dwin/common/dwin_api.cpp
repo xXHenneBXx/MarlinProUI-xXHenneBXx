@@ -418,8 +418,8 @@ void dwinDrawFloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t 
 //  id: Picture ID
 void dwinJPGShowAndCache(const uint8_t id) {
   size_t i = 0;
-  dwinWord(i, 0x2200);
-  dwinByte(i, id);
+  dwinByte(i, 0x2200);   /// FIXED: was ~ dwinWord(i, 0x2200);
+  dwinWord(i, id);       /// FIXED: was ~ dwinByte(i, id);
   dwinSend(i);     // AA 23 00 00 00 00 08 00 01 02 03 CC 33 C3 3C
 }
 
