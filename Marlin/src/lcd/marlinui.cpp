@@ -1833,7 +1833,7 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
     LCD_MESSAGE(MSG_PRINT_ABORTED);
     TERN_(HAS_MARLINUI_MENU, return_to_status());
     TERN_(DWIN_LCD_PROUI, hmiFlag.abort_flag = true);
-	TERN_(DWIN_LCD_PROUI, hmiFlag.abort_flag = true);
+	  TERN_(TJC_DISPLAY, hmiFlag.abort_flag = true);
   }
 
   #if ALL(HAS_MARLINUI_MENU, PSU_CONTROL)
