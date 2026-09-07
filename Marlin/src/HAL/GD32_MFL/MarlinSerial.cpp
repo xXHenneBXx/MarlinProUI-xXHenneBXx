@@ -33,6 +33,46 @@
 
 using namespace arduino;
 
+// Bridge: The MFL framework defines USE_HARDWARE_SERIALx (from variant.h DEFAULT_HARDWARE_SERIAL)
+// but MarlinSerial.cpp checks USING_HW_SERIALx. Define the missing macros so serial objects
+// are actually instantiated for every port Marlin needs.
+
+#ifndef USING_HW_SERIAL0
+  #if (defined(DEFAULT_HARDWARE_SERIAL) && DEFAULT_HARDWARE_SERIAL == 0) \
+   || (defined(SERIAL_PORT) && SERIAL_PORT == 0) \
+   || (defined(LCD_SERIAL_PORT) && LCD_SERIAL_PORT == 0)
+    #define USING_HW_SERIAL0 1
+  #endif
+#endif
+#ifndef USING_HW_SERIAL1
+  #if (defined(DEFAULT_HARDWARE_SERIAL) && DEFAULT_HARDWARE_SERIAL == 1) \
+   || (defined(SERIAL_PORT) && SERIAL_PORT == 1) \
+   || (defined(LCD_SERIAL_PORT) && LCD_SERIAL_PORT == 1)
+    #define USING_HW_SERIAL1 1
+  #endif
+#endif
+#ifndef USING_HW_SERIAL2
+  #if (defined(DEFAULT_HARDWARE_SERIAL) && DEFAULT_HARDWARE_SERIAL == 2) \
+   || (defined(SERIAL_PORT) && SERIAL_PORT == 2) \
+   || (defined(LCD_SERIAL_PORT) && LCD_SERIAL_PORT == 2)
+    #define USING_HW_SERIAL2 1
+  #endif
+#endif
+#ifndef USING_HW_SERIAL3
+  #if (defined(DEFAULT_HARDWARE_SERIAL) && DEFAULT_HARDWARE_SERIAL == 3) \
+   || (defined(SERIAL_PORT) && SERIAL_PORT == 3) \
+   || (defined(LCD_SERIAL_PORT) && LCD_SERIAL_PORT == 3)
+    #define USING_HW_SERIAL3 1
+  #endif
+#endif
+#ifndef USING_HW_SERIAL4
+  #if (defined(DEFAULT_HARDWARE_SERIAL) && DEFAULT_HARDWARE_SERIAL == 4) \
+   || (defined(SERIAL_PORT) && SERIAL_PORT == 4) \
+   || (defined(LCD_SERIAL_PORT) && LCD_SERIAL_PORT == 4)
+    #define USING_HW_SERIAL4 1
+  #endif
+#endif
+
 auto MarlinSerial::get_instance(usart::USART_Base Base, pin_size_t rxPin, pin_size_t txPin) -> MarlinSerial& {
   auto& serial = UsartSerial::get_instance(Base, rxPin, txPin);
   return *reinterpret_cast<MarlinSerial*>(&serial);
