@@ -27,15 +27,13 @@
   #include "../../inc/MarlinConfig.h"
 
   #include "../gcode.h"
-  #include "../../lcd/extui/ui_api.h"
   #include "../../module/planner.h" // for synchronize()
   #include "../../MarlinCore.h"     // for wait_for_user_response()
-  #include "../../lcd/dwin/proui/dwin.h"
   
   #if HAS_MARLINUI_MENU
     #include "../../lcd/marlinui.h"
-  //#elif ENABLED(EXTENSIBLE_UI)
-    //#include "../../lcd/extui/ui_api.h"
+  #elif ENABLED(EXTENSIBLE_UI)
+    #include "../../lcd/extui/ui_api.h"
   #elif ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
     #include "../../lcd/dwin/proui/dwin_popup.h"
     #include "../../lcd/dwin/proui/dwin.h"									

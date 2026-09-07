@@ -50,7 +50,7 @@
   #include "../../lcd/extui/ui_api.h"
 #endif
 
-#if ENABLED(DWIN_LCD_PROUI, TJC_DISPLAY)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
   #include "../../lcd/dwin/proui/dwin.h"
 #endif
 
