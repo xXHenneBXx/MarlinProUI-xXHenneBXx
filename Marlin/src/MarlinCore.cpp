@@ -1012,7 +1012,7 @@ void Marlin::stop() {
   print_job_timer.stop();
 
   #if ANY(PROBING_FANS_OFF, ADVANCED_PAUSE_FANS_PAUSE)
-    thermalManager.set_fans_paused(false); // Un-pause fans for safety
+    Fan::all_resume(); // Un-pause fans for safety
   #endif
 
   if (!isStopped()) {
