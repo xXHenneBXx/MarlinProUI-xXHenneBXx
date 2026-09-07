@@ -78,7 +78,7 @@
   #include "../feature/z_stepper_align.h"
 #endif
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
   #include "../lcd/dwin/proui/dwin.h"
   #include "../lcd/dwin/proui/bedlevel_tools.h"
 #endif

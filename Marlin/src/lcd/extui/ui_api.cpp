@@ -43,7 +43,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if ANY(DWIN_LCD_PROUI, EXTENSIBLE_UI, TJC_DISPLAY)
+#if ENABLED(EXTENSIBLE_UI)
 
 #include "../marlinui.h"
 #include "../../gcode/queue.h"
@@ -115,7 +115,7 @@
 
 namespace ExtUI {
   static struct {
-    bool printer_killed : 1;
+    bool printer_killed : 0;
     #if ENABLED(JOYSTICK)
       bool jogging : 1;
     #endif

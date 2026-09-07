@@ -36,10 +36,10 @@
 #include "../../../core/types.h"
 //#include "proui.h"
 
-//#define NEED_HEX_PRINT 1
-//#define DEBUG_DWIN 1
+#define NEED_HEX_PRINT 1
+#define DEBUG_DWIN 1
 
-#define TJC_DISPLAY
+//#define TJC_DISPLAY
 //#if ENABLED(TJC_DISPLAY)
 //  #define TJC_DISPLAY  // Enable for TJC display
 //  #elif ENABLED(DACAI_DISPLAY)
@@ -50,7 +50,7 @@
 /**
  * Architectures
  */
-#if defined(__STM32F1__) || defined(STM32F1) || defined(ARDUINO_ARCH_HC32) || defined(ARDUINO_ARCH_MFL) || MB(CREALITY_V24S1_301, CREALITY_V24S1_301F4, CREALITY_V4, CREALITY_V422_GD32_MFL, CREALITY_V422)
+#if defined(__STM32F1__) || defined(STM32F1) || defined(ARDUINO_ARCH_HC32) || defined(ARDUINO_ARCH_MFL) || defined(ALLOW_GD32F3) || MB(CREALITY_V24S1_301, CREALITY_V24S1_301F4, CREALITY_V4, CREALITY_V422_GD32_MFL, CREALITY_V422)
   #define DASH_REDRAW 1
 #endif
 
@@ -133,7 +133,7 @@
 /**
  * ProUI internal feature flags
  */
-#ifdef ProUI
+#define ProUI
   #if HAS_BED_PROBE
     #define PROUI_ITEM_ZFR      // Add a menu item to change Z_PROBE_FEEDRATE_SLOW - probe speed
   #endif

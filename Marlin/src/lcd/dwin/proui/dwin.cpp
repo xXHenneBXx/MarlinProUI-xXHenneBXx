@@ -30,7 +30,7 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
 
 #include "dwin.h"
 #include "menus.h"
@@ -2017,7 +2017,27 @@ void dwinCopySettingsFrom(const char * const buff) {
 // Initialize or re-initialize the LCD
 void dwinInitScreen() {
   dwinSetColorDefaults();
-  hmiInit();   // Draws boot screen
+
+  // CRITICAL: Initialize LCD serial BEFORE hmiInit() tries to draw to it.
+  // On GD32 MFL, writing to an uninitialized USART (clock not enabled) causes a Hard Fault.
+  #ifndef LCD_BAUDRATE
+    #define LCD_BAUDRATE 115200
+  #endif
+  LCD_SERIAL.begin(LCD_BAUDRATE);
+  delay(100);               // Let UART stabilize
+
+  // Now safe to draw boot screen (hmiInit calls dwinUpdateLCD which writes to LCD_SERIAL)
+  hmiInit();
+  DWINUI::init();
+  ui.init();
+  
+
+  // Wait for display to power up and establish handshake
+  delay(750);
+  dwinHandshake();          // Establish serial communication with display
+  dwinFrameSetDir(1);
+  dwinJPGCacheTo1(Language_English);
+  
   DWINUI::init();
   DWINUI::setColors(hmiData.colorText, hmiData.colorBackground, hmiData.colorStatusBg);
   DWINUI::onTitleDraw = drawTitle;

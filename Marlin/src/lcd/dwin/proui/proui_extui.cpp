@@ -44,7 +44,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ENABLED(DWIN_LCD_PROUI) && ENABLED(EXTENSIBLE_UI)
+#if ENABLED(DWIN_LCD_PROUI) && ENABLED(EXTENSIBLE_UI) || ENABLED(TJC_DISPLAY)
 
 #include "dwin_popup.h"
 
