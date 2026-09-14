@@ -573,7 +573,7 @@
   #endif
 
   // Extender cable doesn't support SD_DETECT_PIN
-  #if ENABLED(NO_SD_DETECT) && DISABLED(DWIN_LCD_PROUI)
+#if ENABLED(NO_SD_DETECT) && (!ENABLED(DWIN_LCD_PROUI) || !ENABLED(TJC_DISPLAY))
     #undef SD_DETECT_PIN
   #endif
 
@@ -2729,7 +2729,7 @@
   #define HAS_PID_HEATING 1
 #endif
 
-#if ANY(HAS_PID_HEATING, MPC_AUTOTUNE) && ENABLED(DWIN_LCD_PROUI) && DISABLED(DISABLE_TUNING_GRAPH)
+#if ANY(HAS_PID_HEATING, MPC_AUTOTUNE) && ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY) && DISABLED(DISABLE_TUNING_GRAPH)
   #define PROUI_TUNING_GRAPH 1
 #endif
 
@@ -3434,7 +3434,7 @@
     #define _MESH_MIN_Y (Y_MIN_BED + _MESH_INSET)
     #define _MESH_MAX_X (X_MAX_BED - _MESH_INSET)
     #define _MESH_MAX_Y (Y_MAX_BED - _MESH_INSET)
-  #elif ENABLED(DWIN_LCD_PROUI)
+  #elif 	ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
     #define _MESH_MIN_X (_MESH_INSET)
     #define _MESH_MIN_Y (_MESH_INSET)
     #define _MESH_MAX_X ((X_BED_SIZE) - (_MESH_INSET))
@@ -3460,7 +3460,7 @@
   #ifndef MESH_MAX_Y
     #define MESH_MAX_Y _MESH_MAX_Y
   #endif
-#elif DISABLED(DWIN_LCD_PROUI)
+#elif DISABLED(DWIN_LCD_PROUI) || DISABLED(TJC_DISPLAY)
   #undef MESH_MIN_X
   #undef MESH_MIN_Y
   #undef MESH_MAX_X
@@ -3648,6 +3648,8 @@
       // Defined by header
     #elif HAS_GRAPHICAL_TFT
       #define LCD_WIDTH ((TFT_WIDTH) / 16)
+    //#elif ENABLED(TJC_DISPLAY)
+      //#define LCD_WIDTH TERN(TJC_DISPLAY, 8, 16)
     #else
       #define LCD_WIDTH TERN(IS_ULTIPANEL, 20, 16)
     #endif
@@ -3668,10 +3670,6 @@
 #endif
 
 #if BUTTONS_EXIST(EN1, EN2, ENC)
-  #define HAS_ROTARY_ENCODER 1
-#endif
-
-#if ENABLED(TJC_DISPLAY)
   #define HAS_ROTARY_ENCODER 1
 #endif
 

@@ -534,6 +534,27 @@
  *
  */
  /// TODO: TJC_DISPLAY SPECIFIC
+ 
+#ifdef TJC_DISPLAY
+  #define HAS_TJC_DISPLAY 1
+#endif
+#if HAS_TJC_DISPLAY
+  #define TJC_DISPLAY
+#endif
+
+
+ #if ENABLED(TJC_DISPLAY)
+  #define IS_NEWPANEL 1 // KEEP needed for encoder
+  #define SR_LCD_2W_NL 1 // possibly keep for encoder I2C
+  //#define ULTRA_LCD
+  //#define IS_ULTIPANEL 1
+  //#define HAS_MARLINUI_MENU 1
+  #define HAS_MARLINUI_ENCODER 1  // KEEP This is the encoder fucntionality
+  #define HAS_ROTARY_ENCODER 1   //  ^^^^^^^^^
+  //#define HAS_ENCODER_ACTION 1 // possibly uneeded
+  #define HAS_BEEPER 1
+  //#define HAS_TRINAMIC_CONFIG 1
+#endif
 
 /**
  * Ender-3 V2 DWIN with Encoder
@@ -541,7 +562,7 @@
 #if ANY(DWIN_CREALITY_LCD, DWIN_LCD_PROUI, TJC_DISPLAY)
   #define HAS_DWIN_E3V2_BASIC 1
 #endif
-#if ANY(HAS_DWIN_E3V2_BASIC, DWIN_CREALITY_LCD_JYERSUI, SOVOL_SV06_RTS)
+#if ANY(HAS_DWIN_E3V2_BASIC, DWIN_CREALITY_LCD_JYERSUI, SOVOL_SV06_RTS, TJC_DISPLAY)
   #define HAS_DWIN_E3V2 1
   #define STD_ENCODER_PULSES_PER_STEP 4
 #endif
@@ -610,10 +631,6 @@
 #if ANY(HAS_DGUS_LCD, MALYAN_LCD, ANYCUBIC_LCD_I3MEGA, ANYCUBIC_LCD_CHIRON, NEXTION_TFT, TOUCH_UI_FTDI_EVE) //  FIX?: FOR ExtUI DO NOT place DWIN_LCD_PROUI into the condtional " #if ANY(*)" we enable it within the conditional
   #define IS_EXTUI 1 // Just for sanity check.
   #define EXTENSIBLE_UI
-    //#if ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
-	    //#define IS_EXTUI 1  // To pass sanity check.
-	    //#define EXTENSIBLE_UI
-	  //#endif  
 #endif
 
 // DWIN extras
@@ -628,7 +645,7 @@
   #endif
 #endif
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
   #define DO_LIST_BIN_FILES 1
   #if ENABLED(TJC_DISPLAY)
     #define LCD_BRIGHTNESS_DEFAULT 16
@@ -639,7 +656,7 @@
 #endif
 
 // Serial Controllers require LCD_SERIAL_PORT
-#if ANY(IS_DWIN_MARLINUI, HAS_DWIN_E3V2, HAS_DGUS_LCD, MALYAN_LCD, ANYCUBIC_LCD_I3MEGA, ANYCUBIC_LCD_CHIRON, NEXTION_TFT, SOVOL_SV06_RTS)
+#if ANY(IS_DWIN_MARLINUI, HAS_DWIN_E3V2, HAS_DGUS_LCD, MALYAN_LCD, ANYCUBIC_LCD_I3MEGA, ANYCUBIC_LCD_CHIRON, NEXTION_TFT, SOVOL_SV06_RTS, TJC_DISPLAY)
   #define LCD_IS_SERIAL_HOST 1
 #endif
 
@@ -656,7 +673,7 @@
   #endif
 #endif
 
-#if ANY(HAS_WIRED_LCD, EXTENSIBLE_UI, HAS_DWIN_E3V2)
+#if ANY(HAS_WIRED_LCD, EXTENSIBLE_UI, HAS_DWIN_E3V2, TJC_DISPLAY)
   /**
    * HAS_DISPLAY indicates the display uses these MarlinUI methods...
    *  - update
@@ -700,7 +717,7 @@
   #define HAS_MARLINUI_MENU 1
 #endif
 
-#if ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, HAS_DWIN_E3V2)
+#if ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, HAS_DWIN_E3V2, TJC_DISPLAY)
   #define HAS_MANUAL_MOVE_MENU 1
 #endif
 
