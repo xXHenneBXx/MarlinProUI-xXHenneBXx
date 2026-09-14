@@ -48,10 +48,10 @@
  * here we define this default string as the date where the latest release
  * version was tagged.
  */
-//#define STRING_DISTRIBUTION_DATE "2026-08-08"
 
 #define STRING_DISTRIBUTION_DATE __DATE__
 #define STRING_DISTRIBUTION_TIME __TIME__
+//#define STRING_DISTRIBUTION_DATE "2026-09-07"
 
 /**
  * The protocol for communication to the host. Protocol indicates communication
