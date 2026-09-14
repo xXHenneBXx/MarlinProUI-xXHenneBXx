@@ -50,18 +50,17 @@
   #include "motion.h"
 #endif
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
-  #include "../lcd/dwin/proui/dwin.h"
-#endif
 
 #if ENABLED(DWIN_CREALITY_LCD)
   #include "../lcd/dwin/creality/dwin.h"
 #elif ENABLED(SOVOL_SV06_RTS)
   #include "../lcd/sovol_rts/sovol_rts.h"
-#endif
-
-#if ENABLED(EXTENSIBLE_UI)
+#elif ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
+#elif ENABLED(DWIN_LCD_PROUI)
+  #include "../lcd/dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
 #endif
 
 #if ENABLED(HOST_PROMPT_SUPPORT)
@@ -4387,13 +4386,15 @@ void Temperature::isr() {
   //
   // Update lcd buttons at ~488Hz or ~976Hz
   //
-  #if ENABLED(FAST_BUTTON_POLLING)
-    constexpr bool do_buttons = true;
-  #else
-    static bool do_buttons;
-    FLIP(do_buttons);
+  #if HAS_WIRED_LCD
+    #if ENABLED(FAST_BUTTON_POLLING)
+      constexpr bool do_buttons = true;
+    #else
+      static bool do_buttons;
+      FLIP(do_buttons);
+    #endif
+    if (do_buttons) ui.update_buttons();
   #endif
-  if (do_buttons) ui.update_buttons();
 
   /**
    * One sensor is sampled on every other call of the ISR.

@@ -3180,6 +3180,8 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
  * Serial displays require a dedicated serial port
  */
 #ifdef LCD_SERIAL_PORT
+  //#if ENABLED(TJC_DISPLAY) && MB(CREALITY_V422_GD32_MFL) && LCD_SERIAL_PORT != 2
+    //#error "TJC_DISPLAY on the GD32MFL Creality V4 board requires LCD_SERIAL_PORT=2 (USART2/PB10-PB11). USART1 is PA2/PA3 and conflicts with the bed heater."
   #if LCD_SERIAL_PORT == SERIAL_PORT
     #error "LCD_SERIAL_PORT cannot be the same as SERIAL_PORT."
   #elif defined(SERIAL_PORT_2) && LCD_SERIAL_PORT == SERIAL_PORT_2

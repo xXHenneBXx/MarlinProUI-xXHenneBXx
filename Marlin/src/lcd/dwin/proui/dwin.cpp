@@ -30,7 +30,8 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#if ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI)
+#elif ENABLED(TJC_DISPLAY)
 
 #include "dwin.h"
 #include "menus.h"
@@ -130,6 +131,9 @@
 #if HAS_LOCKSCREEN
   #include "lockscreen.h"
 #endif
+
+//#define DEBUG_OUT ENABLED(DEBUG_DWIN)
+//#include "../../../core/debug_out.h"
 
 #ifndef MACHINE_SIZE
   #define MACHINE_SIZE STRINGIFY(X_BED_SIZE) "x" STRINGIFY(Y_BED_SIZE) "x" STRINGIFY(Z_MAX_POS)
@@ -324,10 +328,14 @@ void hmiSetLanguageCache() {
 }
 
 void hmiSetLanguage() {
+  SERIAL_ECHOLNPGM("HENNE: hmiSetLanguage start");
   #if ALL(EEPROM_SETTINGS, IIC_BL24CXX_EEPROM)
+    SERIAL_ECHOLNPGM("HENNE: before BL24CXX::read");
     BL24CXX::read(DWIN_LANGUAGE_EEPROM_ADDRESS, (uint8_t*)&hmiFlag.language, sizeof(hmiFlag.language));
+    SERIAL_ECHOLNPGM("HENNE: after BL24CXX::read");
   #endif
   hmiSetLanguageCache();
+  SERIAL_ECHOLNPGM("HENNE: after hmiSetLanguageCache");
 }
 
 void hmiToggleLanguage() {
@@ -346,7 +354,10 @@ typedef struct { uint16_t x, y[2], w, h; } text_info_t;
 
 void ICON_Button(const bool selected, const int iconid, const frame_rect_t &ico, const text_info_t (&txt), FSTR_P caption) {
   DWINUI::drawIconWB(iconid + selected, ico.x, ico.y);
-  if (selected) DWINUI::drawBox(0, hmiData.colorHighlight, ico);
+  if (selected) { 
+    DWINUI::drawBox(0, hmiData.colorHighlight, ico);
+	  //DWINUI::drawBox(0, hmiData.colorHighlight, { ico.x + 1, ico.y + 1, ico.w - 2, ico.h - 2 });
+  }
   if (hmiIsChinese()) {
     dwinFrameAreaCopy(1, txt.x, txt.y[selected], txt.x + txt.w - 1, txt.y[selected] + txt.h - 1, ico.x + (ico.w - txt.w) / 2, (ico.y + ico.h - 25) - txt.h/2);
   }
@@ -1350,7 +1361,9 @@ void hmiWaitForUser() {
 }
 
 void hmiInit() {
+  SERIAL_ECHOLNPGM("HENNE: hmiInit start");
   #if ENABLED(SHOW_BOOTSCREEN)
+    SERIAL_ECHOLNPGM("HENNE: SHOW_BOOTSCREEN enabled, entering splash loop");
     #ifndef BOOTSCREEN_TIMEOUT
       #define BOOTSCREEN_TIMEOUT 1100
     #endif
@@ -1362,8 +1375,12 @@ void hmiInit() {
       dwinUpdateLCD();
       safe_delay((BOOTSCREEN_TIMEOUT) / 22);
     }
+    SERIAL_ECHOLNPGM("HENNE: splash loop done");
+  #else
+    SERIAL_ECHOLNPGM("HENNE: SHOW_BOOTSCREEN disabled, skipping splash loop");
   #endif
   hmiSetLanguage();
+  SERIAL_ECHOLNPGM("HENNE: hmiInit done");
 }
 
 void eachMomentUpdate() {
@@ -1476,7 +1493,6 @@ void eachMomentUpdate() {
         return;
       }
     #endif
-
     dwinUpdateLCD();
   }
 }
@@ -1596,7 +1612,6 @@ void hmiReturnScreen() {
   marlin.user_resume();
   drawMainArea();
 }
-
 #if ANY(TJC_DISPLAY, DACAI_DISPLAY)
   #define HOME_AND_KILL_ICON ICON_BLTouch
 #else
@@ -1883,6 +1898,7 @@ void dwinHomingDone() {
 
 // Started a Print Job
 void dwinPrintStarted() {
+  SERIAL_ECHOLNPGM("DWIN_Print_Started: ", sdPrinting());						   
   TERN_(HAS_GCODE_PREVIEW, if (hostPrinting()) preview.invalidate());
   TERN_(SET_PROGRESS_PERCENT, ui.progress_reset());
   TERN_(SET_REMAINING_TIME, ui.reset_remaining_time());
@@ -1894,17 +1910,20 @@ void dwinPrintStarted() {
 
 // Pause a print job
 void dwinPrintPause() {
+  SERIAL_ECHOLNPGM("DWIN_Print_Pause");
   ICON_ResumeOrPause();
 }
 
 // Resume print job
 void dwinPrintResume() {
+  SERIAL_ECHOLNPGM("DWIN_Print_Resume");
   ICON_ResumeOrPause();
   LCD_MESSAGE(MSG_RESUME_PRINT);
 }
 
 // Ended print job
 void dwinPrintFinished() {
+  SERIAL_ECHOLNPGM("DWIN_Print_Finished");
   TERN_(POWER_LOSS_RECOVERY, if (card.isPrinting()) recovery.cancel());
   hmiFlag.abort_flag = false;
   hmiFlag.pause_flag = false;
@@ -1960,6 +1979,7 @@ void dwinSetColorDefaults() {
 static_assert(ExtUI::eeprom_data_size >= EXTUI_EEPROM_DATA_SIZE, "Insufficient space in EEPROM for UI parameters");
 
 void dwinSetDataDefaults() {
+  SERIAL_ECHOLNPGM("DWIN_SetDataDefaults");
   dwinSetColorDefaults();
   DWINUI::setColors(hmiData.colorText, hmiData.colorBackground, hmiData.colorStatusBg);
   TERN_(PIDTEMP, hmiData.hotendPIDT = PREHEAT_1_TEMP_HOTEND);
@@ -1993,10 +2013,13 @@ void dwinSetDataDefaults() {
 }
 
 void dwinCopySettingsTo(char * const buff) {
+  SERIAL_ECHOLNPGM("dwinCopySettingsTo");
+  SERIAL_ECHOLNPGM("hmidata: ", sizeof(hmi_data_t));
   memcpy(buff, &hmiData, sizeof(hmi_data_t));
 }
 
 void dwinCopySettingsFrom(const char * const buff) {
+  SERIAL_ECHOLNPGM("DWIN_CopySettingsFrom");
   memcpy(&hmiData, buff, sizeof(hmi_data_t));
   if (hmiData.colorText == hmiData.colorBackground) dwinSetColorDefaults();
   DWINUI::setColors(hmiData.colorText, hmiData.colorBackground, hmiData.colorStatusBg);
@@ -2016,19 +2039,18 @@ void dwinCopySettingsFrom(const char * const buff) {
 
 // Initialize or re-initialize the LCD
 void dwinInitScreen() {
+  SERIAL_ECHOLNPGM("dwinInitScreen");
   dwinSetColorDefaults();
-
-  // CRITICAL: Initialize LCD serial BEFORE hmiInit() tries to draw to it.
+  SERIAL_ECHOLNPGM("HENNE: after dwinSetColorDefaults");
+    // CRITICAL: Initialize LCD serial BEFORE hmiInit() tries to draw to it.
   // On GD32 MFL, writing to an uninitialized USART (clock not enabled) causes a Hard Fault.
   #ifndef LCD_BAUDRATE
     #define LCD_BAUDRATE 115200
   #endif
   LCD_SERIAL.begin(LCD_BAUDRATE);
   delay(100);               // Let UART stabilize
-
-  // Now safe to draw boot screen (hmiInit calls dwinUpdateLCD which writes to LCD_SERIAL)
   hmiInit();
-  DWINUI::init();
+  SERIAL_ECHOLNPGM("HENNE: after hmiInit");
   ui.init();
   
 
@@ -2037,16 +2059,23 @@ void dwinInitScreen() {
   dwinHandshake();          // Establish serial communication with display
   dwinFrameSetDir(1);
   dwinJPGCacheTo1(Language_English);
-  
   DWINUI::init();
+  SERIAL_ECHOLNPGM("HENNE: after DWINUI::init");
   DWINUI::setColors(hmiData.colorText, hmiData.colorBackground, hmiData.colorStatusBg);
+  SERIAL_ECHOLNPGM("HENNE: after DWINUI::setColors");
   DWINUI::onTitleDraw = drawTitle;
+  SERIAL_ECHOLNPGM("HENNE: after onTitleDraw assign");
   initMenu();
+  SERIAL_ECHOLNPGM("HENNE: after initMenu");
   checkkey = 255;
   hash_changed = true;
+  SERIAL_ECHOLNPGM("HENNE: before dwinDrawStatusLine");
   dwinDrawStatusLine();
+  SERIAL_ECHOLNPGM("HENNE: after dwinDrawStatusLine");
   dwinDrawDashboard();
+  SERIAL_ECHOLNPGM("HENNE: after dwinDrawDashboard");
   gotoMainMenu();
+  SERIAL_ECHOLNPGM("HENNE: after gotoMainMenu");
 }
 
 void dwinRebootScreen() {
@@ -2055,12 +2084,15 @@ void dwinRebootScreen() {
   DWINUI::drawCenteredString(COLOR_WHITE, 220, GET_TEXT_F(MSG_PLEASE_WAIT_REBOOT));
   dwinUpdateLCD();
   safe_delay(500);
+  SERIAL_ECHOLNPGM("Reboot Screen");
 }
 
 void dwinRedrawDash() {
   hash_changed = true;
   dwinDrawStatusMessage();
   dwinDrawDashboard();
+  SERIAL_ECHOLNPGM("Redraw Dash");
+
 }
 
 void dwinRedrawScreen() {
@@ -2071,11 +2103,12 @@ void dwinRedrawScreen() {
 //
 // MarlinUI functions
 //
-void MarlinUI::init_lcd() {
-  delay(750); // Wait to wakeup screen
+void MarlinUI::init_lcd() {  delay(750); // Wait to wakeup screen
   const bool hs = dwinHandshake(); UNUSED(hs);
   dwinFrameSetDir(1);
   dwinJPGCacheTo1(Language_English);
+  SERIAL_ECHOLNPGM("MarlinUI Init: Before clear lcd and update leads to HAS_LCD_BRIGHTNESS");
+
 }
 
 void MarlinUI::clear_lcd() {}

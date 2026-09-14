@@ -74,14 +74,18 @@
 #endif
 
 #if HAS_DWIN_E3V2
-    #include "lcd/dwin/common/encoder.h"
-    #if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
-      #include "lcd/dwin/proui/dwin.h"
+  #include "lcd/dwin/common/encoder.h"
+  #if ENABLED(DWIN_CREALITY_LCD)
+    #include "lcd/dwin/creality/dwin.h"
+  #elif ENABLED(DWIN_LCD_PROUI)
+    #include "lcd/dwin/proui/dwin.h"
+  #elif ENABLED(TJC_DISPLAY)
+    #include "lcd/dwin/proui/dwin.h"
   #elif ENABLED(DWIN_CREALITY_LCD_JYERSUI)
     #include "lcd/dwin/jyersui/dwin.h"
   #elif ENABLED(SOVOL_SV06_RTS)
     #include "lcd/sovol_rts/sovol_rts.h"
-	#endif	
+  #endif
 #endif
 
 #if HAS_ETHERNET
@@ -853,12 +857,6 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
 
   // Update the Beeper queue
   TERN_(HAS_BEEPER, buzzer.tick());
-  ///TODO: Fix the ui.update for extensible only
-  // Handle ProUI extension update process
-  //TERN_(DWIN_LCD_PROUI, ui.update());
-  
-  // Handle ProUI extension update process
-  //TERN_(TJC_DISPLAY, ui.update());
 
   // Async Babystepping via the Emergency Parser
   #if ALL(EP_BABYSTEPPING, EMERGENCY_PARSER)
@@ -876,6 +874,14 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
     RTS_Update();
   #else
     ui.update();
+  #endif
+  
+  #if ENABLED(DWIN_LCD_PROUI)
+   // Handle ProUI extension update process
+   TERN_(DWIN_LCD_PROUI, ui.update());
+  #elif ENABLED(TJC_DISPLAY)
+   // Handle TJC ProUI extension update process
+   TERN_(TJC_DISPLAY, ui.update());
   #endif
 
   // Run i2c Position Encoders
@@ -1332,7 +1338,6 @@ void setup() {
   if (mcu & RST_WATCHDOG)  SERIAL_ECHOLNPGM(STR_WATCHDOG_RESET);
   if (mcu & RST_SOFTWARE)  SERIAL_ECHOLNPGM(STR_SOFTWARE_RESET);
   
-  #if ANY(DWIN_LCD_PROUI, TJC_DISPLAY, HAS_CGCODE)						
     // Identify myself as Marlin x.x.x
     SERIAL_ECHOLNPGM("Marlin " SHORT_BUILD_VERSION);
     #ifdef STRING_DISTRIBUTION_DATE
@@ -1340,9 +1345,9 @@ void setup() {
         " Last Updated: " STRING_DISTRIBUTION_DATE
         " | Author: xXHennBXx"
       );
-	#endif
-    SERIAL_ECHO_MSG(" Compiled: " __DATE__);
-  #endif			 
+  #endif
+  SERIAL_ECHO_MSG(" Compiled: " __DATE__);
+		 
   SERIAL_ECHO_MSG(STR_FREE_MEMORY, hal.freeMemory(), STR_PLANNER_BUFFER_BYTES, sizeof(block_t) * (BLOCK_BUFFER_SIZE));
 
   // Some HAL need precise delay adjustment
@@ -1387,15 +1392,15 @@ void setup() {
 
   #if HAS_MEDIA
     SETUP_RUN(card.init());           // Prepare for media usage
-    #if ANY(SDCARD_EEPROM_EMULATION, POWER_LOSS_RECOVERY)
+    #if ALL(SDCARD_EEPROM_EMULATION, POWER_LOSS_RECOVERY)
       SETUP_RUN(card.mount());        // Mount media with settings before first_load
     #endif
   #endif
 
   //#if ENABLED(PRINTJOB_TIMER_AUTOSTART)
-  //  // Stop timer and set welcome message
-  //  if (TERN1(POWER_LOSS_RECOVERY, !recovery.check()))
-  //    thermalManager.auto_job_check_timer(false, true);
+    // Stop timer and set welcome message
+    //if (TERN1(POWER_LOSS_RECOVERY, !recovery.check()))
+      //thermalManager.auto_job_check_timer(false, true);
   //#endif
 
   // Prepare some LCDs to display early
@@ -1639,10 +1644,6 @@ void setup() {
     SETUP_RUN(est_init());
   #endif
 
-  #if ENABLED(USE_WATCHDOG)
-    SETUP_RUN(hal.watchdog_init());   // Reinit watchdog after hal.get_reset_source call
-  #endif
-
   #if ENABLED(EXTERNAL_CLOSED_LOOP_CONTROLLER)
     SETUP_RUN(closedloop.init());
   #endif
@@ -1673,14 +1674,28 @@ void setup() {
     const uint8_t err = BL24CXX::check();
     SERIAL_ECHO_TERNARY(err, "BL24CXX Check ", "failed", "succeeded", "!\n");
   #endif
-  
-  #if HAS_DWIN_E3V2_BASIC
-    SETUP_RUN(dwinInitScreen());  // ELSE try this (MarlinUI::init_lcd());
+
+  #if ENABLED(DWIN_CREALITY_LCD)
+    SETUP_RUN(dwinInitScreen());
+  #elif ENABLED(DWIN_LCD_PROUI)
+    SETUP_RUN(dwinInitScreen());
+  #elif ENABLED(TJC_DISPLAY)
+    SETUP_RUN(dwinInitScreen());
+  #elif ENABLED(HAS_DWIN_E3V2)
+    SETUP_RUN(dwinInitScreen());
   #elif ENABLED(SOVOL_SV06_RTS)
     SETUP_RUN(rts.init());
   #endif
 
-  #if HAS_SERVICE_INTERVALS && !HAS_DWIN_E3V2_BASIC /// REMOVED: && DISABLED(DWIN_CREALITY_LCD)
+  #if ENABLED(USE_WATCHDOG)
+    SETUP_RUN(hal.watchdog_init());   // Enable FWDGT AFTER long display init
+  #endif
+
+  #if ENABLED(EASYTHREED_UI)
+    SETUP_RUN(easythreed_ui.init());
+  #endif
+
+  #if HAS_SERVICE_INTERVALS && DISABLED(DWIN_CREALITY_LCD)
     SETUP_RUN(ui.reset_status(true));  // Show service messages or keep current status
   #endif
 
@@ -1713,10 +1728,6 @@ void setup() {
 
   #if ALL(HAS_MARLINUI_MENU, TOUCH_SCREEN_CALIBRATION) && ANY(TFT_CLASSIC_UI, TFT_COLOR_UI) /// REMOVED: DWIN_CREALITY_LCD
     SETUP_RUN(ui.check_touch_calibration());
-  #endif
-
-  #if ENABLED(EASYTHREED_UI)
-    SETUP_RUN(easythreed_ui.init());
   #endif
 
   #if HAS_TRINAMIC_CONFIG && DISABLED(PSU_DEFAULT_OFF)
@@ -1782,5 +1793,5 @@ void loop() {
 
     TERN_(MARLIN_TEST_BUILD, runPeriodicTests());
 
-  } while (ENABLED(__AVR__)); // Loop forever on slower (AVR) boards
+  } while (ENABLED(__AVR__) || ENABLED(ARDUINO_ARCH_MFL)); // Loop forever on slower (AVR) boards
 }

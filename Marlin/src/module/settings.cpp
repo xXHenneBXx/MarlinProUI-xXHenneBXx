@@ -78,16 +78,17 @@
   #include "../feature/z_stepper_align.h"
 #endif
 
-#if ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
-  #include "../lcd/dwin/proui/dwin.h"
-  #include "../lcd/dwin/proui/bedlevel_tools.h"
-#endif
-
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
 #elif ENABLED(DWIN_CREALITY_LCD_JYERSUI)
   #include "../lcd/dwin/jyersui/dwin.h"
+#elif ENABLED(DWIN_LCD_PROUI)
+  #include "../lcd/dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
 #endif
+
+#include "../lcd/dwin/proui/bedlevel_tools.h"
 
 #if ENABLED(HOST_PROMPT_SUPPORT)
   #include "../feature/host_actions.h"

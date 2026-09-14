@@ -124,14 +124,14 @@ Stepper stepper; // Singleton
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
+#elif ENABLED(DWIN_LCD_PROUI)
+  #include "../lcd/dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
 #endif
 
 #if ENABLED(I2S_STEPPER_STREAM)
   #include "../HAL/ESP32/i2s.h"
-#endif
-
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
-  #include "../lcd/dwin/proui/dwin.h"
 #endif
 
 // public:
