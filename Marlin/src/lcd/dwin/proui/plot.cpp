@@ -29,7 +29,9 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI)
+#elif ENABLED (TJC_DISPLAY)
+
 
 #include "dwin.h"
 
@@ -78,4 +80,4 @@ void Plot::update(const celsius_float_t value) {
 }
 
 #endif // PROUI_TUNING_GRAPH
-#endif // DWIN_LCD_PROUI
+#endif // DWIN_LCD_PROUI || TJC_DISPLAY

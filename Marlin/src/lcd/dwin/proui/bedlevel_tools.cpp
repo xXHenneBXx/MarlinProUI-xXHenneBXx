@@ -43,7 +43,8 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if (ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)) && HAS_LEVELING
+#if ENABLED(DWIN_LCD_PROUI) && HAS_LEVELING
+#elif ENABLED(TJC_DISPLAY) && HAS_LEVELING
 
 #include "dwin.h"
 #include "dwinui.h"

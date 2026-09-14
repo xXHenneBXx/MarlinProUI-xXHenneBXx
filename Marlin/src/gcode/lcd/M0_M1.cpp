@@ -34,9 +34,12 @@
     #include "../../lcd/marlinui.h"
   #elif ENABLED(EXTENSIBLE_UI)
     #include "../../lcd/extui/ui_api.h"
-  #elif ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #elif ENABLED(DWIN_LCD_PROUI)
     #include "../../lcd/dwin/proui/dwin_popup.h"
-    #include "../../lcd/dwin/proui/dwin.h"									
+    #include "../../lcd/dwin/proui/dwin.h"	
+  #elif ENABLED(TJC_DISPLAY)
+    #include "../../lcd/dwin/proui/dwin_popup.h"
+    #include "../../lcd/dwin/proui/dwin.h"	
   #endif
 
   #if ENABLED(HOST_PROMPT_SUPPORT)
@@ -70,7 +73,12 @@
         ExtUI::onUserConfirmRequired(ICON_Continue_1, parser.string_arg, GET_TEXT_F(MSG_USERWAIT));
       else
         ExtUI::onUserConfirmRequired(ICON_Stop_1, GET_TEXT_F(MSG_STOPPED), GET_TEXT_F(MSG_USERWAIT));
-    #elif ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
+    #elif ENABLED(DWIN_LCD_PROUI)
+      if (parser.string_arg)
+        dwinPopupConfirm(ICON_BLTouch, parser.string_arg, GET_TEXT_F(MSG_USERWAIT));
+      else
+        dwinPopupConfirm(ICON_BLTouch, GET_TEXT_F(MSG_STOPPED), GET_TEXT_F(MSG_USERWAIT));
+	#elif ENABLED(TJC_DISPLAY)
       if (parser.string_arg)
         dwinPopupConfirm(ICON_BLTouch, parser.string_arg, GET_TEXT_F(MSG_USERWAIT));
       else

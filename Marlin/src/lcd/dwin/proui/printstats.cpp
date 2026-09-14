@@ -30,7 +30,8 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY) && ENABLED(PRINTCOUNTER)
+#if ENABLED(DWIN_LCD_PROUI) && ENABLED(PRINTCOUNTER)
+#elif ENABLED (TJC_DISPLAY) && ENABLED(PRINTCOUNTER)
 
 #include "dwin_popup.h"
 #include "printstats.h"

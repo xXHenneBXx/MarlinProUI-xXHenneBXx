@@ -30,7 +30,8 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI)
+#elif ENABLED(TJC_DISPLAY)
 
 #include "dwinui.h"
 #include "dwin_defines.h"
@@ -338,4 +339,4 @@ void Title::frameCopy(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
   frameCopy(1, x, y, x + w - 1, y + h - 1);
 }
 
-#endif // DWIN_LCD_PROUI  && TJC_DISPLAY
+#endif // DWIN_LCD_PROUI  || TJC_DISPLAY

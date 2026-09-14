@@ -40,10 +40,12 @@
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../../../lcd/extui/ui_api.h"
-#endif
-
-#if ENABLED(DWIN_LCD_PROUI, TJC_DISPLAY)
+#elif ENABLED(DWIN_LCD_PROUI)
   #include "../../../lcd/dwin/proui/dwin.h"
+  #include "../../../lcd/extui/ui_api.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../../../lcd/dwin/proui/dwin.h"
+  #include "../../../lcd/extui/ui_api.h"
 #endif
 
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)

@@ -70,11 +70,13 @@ GcodeSuite gcode;
 #endif
 
 #if ENABLED(EXTENSIBLE_UI)
-  #include "../lcd/extui/ui_api.h" // for ExtUI::onLevelingDone
-#endif
-
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+  #include "../lcd/extui/ui_api.h"
+#elif ENABLED(DWIN_LCD_PROUI)
   #include "../lcd/dwin/proui/dwin.h"
+  #include "../lcd/extui/ui_api.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../lcd/dwin/proui/dwin.h"
+  #include "../lcd/extui/ui_api.h"
 #endif
 
 #include "../MarlinCore.h" // for idle, kill

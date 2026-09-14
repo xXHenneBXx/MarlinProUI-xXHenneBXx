@@ -51,7 +51,9 @@ MarlinUI ui;
   #include "dwin/jyersui/dwin.h"
 #elif ENABLED(SOVOL_SV06_RTS)
   #include "sovol_rts/sovol_rts.h"
-#elif ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#elif ENABLED(DWIN_LCD_PROUI)
+  #include "dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
   #include "dwin/proui/dwin.h"
 #endif
 
@@ -1609,7 +1611,9 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
 
   #if ENABLED(EXTENSIBLE_UI)
     #include "extui/ui_api.h"
-  #elif ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
+  #elif ENABLED(DWIN_LCD_PROUI)
+    #include "../lcd/dwin/proui/dwin.h"
+  #elif ENABLED(TJC_DISPLAY)
     #include "../lcd/dwin/proui/dwin.h"
   #endif
 

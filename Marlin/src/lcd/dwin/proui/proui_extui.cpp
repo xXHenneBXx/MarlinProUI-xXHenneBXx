@@ -44,14 +44,20 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ENABLED(DWIN_LCD_PROUI) && ENABLED(EXTENSIBLE_UI) || ENABLED(TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI)
+#elif ENABLED(EXTENSIBLE_UI)
+#elif ENABLED(TJC_DISPLAY)
 
 #include "dwin_popup.h"
+#include "dwin.h"
+#include "dwin_lcd.h"
 
 #if HAS_MESH
   #include "meshviewer.h"
 #endif
 
+#include "../../dwin/common/dwin_api.h"
+#include "../../dwin/proui/dwin.h"
 #include "../../extui/ui_api.h"
 #include "../../../module/stepper.h"
 
@@ -65,7 +71,7 @@
 
 namespace ExtUI {
 
-  void onStartup() {}
+  void onStartup() { dwinInitScreen(); }
 
   void onIdle() {}
   void onPrinterKilled(FSTR_P const error, FSTR_P const component) {}

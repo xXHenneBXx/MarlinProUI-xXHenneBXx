@@ -30,7 +30,8 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI)
+#elif ENABLED (TJC_DISPLAY)
 
 #include "dwin.h"
 
@@ -90,4 +91,4 @@ void ESDiag::update() {
 }
 
 #endif // HAS_ESDIAG
-#endif // DWIN_LCD_PROUI && TJC_DISPLAY
+#endif // DWIN_LCD_PROUI || TJC_DISPLAY

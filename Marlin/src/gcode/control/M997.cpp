@@ -26,10 +26,13 @@
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../../lcd/extui/ui_api.h"
-#endif
-
-#if ENABLED(DWIN_LCD_PROUI, TJC_DISPLAY)
+#elif ENABLED(DWIN_LCD_PROUI)
   #include "../../lcd/dwin/proui/dwin.h"
+#include "../../lcd/extui/ui_api.h"
+
+#elif ENABLED(TJC_DISPLAY)
+  #include "../../lcd/dwin/proui/dwin.h"
+  #include "../../lcd/extui/ui_api.h"
 #endif
 
 /**
@@ -37,8 +40,13 @@
  */
 void GcodeSuite::M997() {
 
-  TERN_(EXTENSIBLE_UI, ExtUI::onFirmwareFlash());
-
+  #if ENABLED(EXTENSIBLE_UI)
+    TERN_(EXTENSIBLE_UI, ExtUI::onFirmwareFlash());
+  #elif ENABLED(DWIN_LCD_PROUI)
+    TERN_(DWIN_LCD_PROUI, onFirmwareFlash());
+  #elif ENABLED(TJC_DISPLAY)
+    TERN_(TJC_DISPLAY, onFirmwareFlash());
+  #endif
   flashFirmware(parser.intval('S'));
 
 }

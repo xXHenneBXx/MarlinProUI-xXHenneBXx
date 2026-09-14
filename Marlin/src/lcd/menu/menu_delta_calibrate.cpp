@@ -39,11 +39,11 @@
 #endif
 
 #if ENABLED(EXTENSIBLE_UI)
-  #include "../extui/ui_api.h"
-#endif
-
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
-  #include "../lcd/dwin/proui/dwin.h"
+  #include "../../../lcd/extui/ui_api.h"
+#elif ENABLED(DWIN_LCD_PROUI)
+  #include "../../../lcd/dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../../../lcd/dwin/proui/dwin.h"
 #endif
 
 void _man_probe_pt(const xy_pos_t &xy) {

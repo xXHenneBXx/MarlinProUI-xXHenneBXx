@@ -225,7 +225,7 @@ int16_t Motion::feedrate_percentage = 100;
   feedRate_t Motion::xy_probe_feedrate_mm_s = MMM_TO_MMS(XY_PROBE_FEEDRATE);
 #endif
 
-#if ENABLED(PROUI_ITEM_ZFR) || ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
+#if ENABLED(PROUI_ITEM_ZFR) && ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY)
   feedRate_t Motion::z_probe_slow_mm_s = MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW);
 #endif
 

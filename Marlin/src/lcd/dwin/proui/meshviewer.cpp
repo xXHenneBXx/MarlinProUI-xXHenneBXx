@@ -30,7 +30,8 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if HAS_MESH && (ENABLED(DWIN_LCD_PROUI) || ENABLED(TJC_DISPLAY))
+#if HAS_MESH && ENABLED(DWIN_LCD_PROUI)
+#elif HAS_MESH && ENABLED(TJC_DISPLAY)
 
 #include "../../marlinui.h"
 #include "../../../feature/bedlevel/bedlevel.h"

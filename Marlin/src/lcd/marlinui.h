@@ -49,8 +49,11 @@
 
 #if ENABLED(DWIN_CREALITY_LCD)
   #include "dwin/creality/dwin.h"
-#elif ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#elif ENABLED(DWIN_LCD_PROUI)
   #include "dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "dwin/proui/dwin.h"
+  //#include "extui/ui_api.h" 
 #endif
 
 #if ALL(HAS_STATUS_MESSAGE, IS_DWIN_MARLINUI)

@@ -29,7 +29,8 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#if ENABLED(DWIN_LCD_PROUI)
+#elif ENABLED (TJC_DISPLAY)
 
 #include "../common/encoder.h"
 #include "dwin.h"
@@ -568,4 +569,4 @@ void redrawItem() {
   static_cast<MenuItemPtr*>(currentMenu->selectedItem())->value;
 }
 
-#endif // ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#endif // DWIN_LCD_PROUI || TJC_DISPLAY

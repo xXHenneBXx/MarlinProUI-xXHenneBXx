@@ -48,10 +48,12 @@
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../../lcd/extui/ui_api.h"
-#endif
-
-#if ANY(DWIN_LCD_PROUI, TJC_DISPLAY)
+#elif ENABLED(DWIN_LCD_PROUI)
   #include "../../lcd/dwin/proui/dwin.h"
+#elif ENABLED(TJC_DISPLAY)
+  #include "../../lcd/dwin/proui/dwin.h"
+#elif ENABLED(SOVOL_SV06_RTS)
+  #include "../../lcd/sovol_rts/sovol_rts.h"
 #endif
 
 #if ENABLED(HOST_ACTION_COMMANDS)
@@ -60,10 +62,6 @@
 
 #ifndef PE_LEDS_COMPLETED_TIME
   #define PE_LEDS_COMPLETED_TIME (30*60)
-#endif
-
-#if ENABLED(SOVOL_SV06_RTS)
-  #include "../../lcd/sovol_rts/sovol_rts.h"
 #endif
 
 /**
